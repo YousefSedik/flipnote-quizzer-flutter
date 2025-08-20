@@ -54,6 +54,23 @@ class ApiClient {
     );
   }
 
+  Future<bool> isAuthenticated() async {
+    final accessToken = await storage.read(key: "access_token");
+    if (accessToken != null) {
+      _dio
+          .post("/auth/token/verify/", data: {"token": accessToken})
+          .then((response) {
+            if (response.statusCode == 200) {
+              return true;
+            }
+          })
+          .catchError((error) {
+            return false;
+          });
+    }
+    return false;
+  }
+
   Future<Response> signup(String email, String password) {
     return _dio.post(
       "/auth/signup/",
@@ -69,6 +86,7 @@ class ApiClient {
   Future<Response> getHistory() {
     return _dio.get("quizzes/history");
   }
+
   Future<Response> getQuiz(String quizId) {
     return _dio.get("quizzes/$quizId");
   }

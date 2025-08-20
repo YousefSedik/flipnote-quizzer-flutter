@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:project/pages/create_quiz.dart';
+import 'package:project/pages/edit_quiz.dart';
+import 'package:project/pages/home.dart';
 import 'package:project/pages/login.dart';
+import 'package:project/pages/quiz.dart';
+import 'package:project/pages/signup.dart';
+import 'package:project/pages/splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,7 +14,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,16 +22,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(),
+      home: const SplashPage(),
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignUpPage(),
+        '/home': (context) => const HomePage(),
+        '/quiz/edit': (context) => const EditQuizPage(),
+        '/quiz/create': (context) =>  CreateQuizPage(),
+        '/quiz/play': (context) => const Quiz(), // Placeholder for quiz play page
+        // '/home': (context) => const HomePage(),
+
+      },
     );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return LoginPage();
   }
 }
