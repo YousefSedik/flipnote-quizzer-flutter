@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class InputTextField extends StatelessWidget {
@@ -8,11 +7,13 @@ class InputTextField extends StatelessWidget {
     required this.hintText,
     required this.title,
     required this.lastItem,
+    required this.isObscureText,
   });
   final TextEditingController controller;
   final String hintText;
   final String title;
   final bool lastItem;
+  final bool isObscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,7 @@ class InputTextField extends StatelessWidget {
         ),
         SizedBox(height: 8),
         TextFormField(
+          
           controller: controller,
           style: TextStyle(
             fontSize: 16,
@@ -48,7 +50,7 @@ class InputTextField extends StatelessWidget {
               fontFamily: 'SF Pro Text',
             ),
             filled: true,
-            fillColor: Colors.grey[50],
+            fillColor: Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey[200]!, width: 1),
@@ -67,7 +69,7 @@ class InputTextField extends StatelessWidget {
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
-          obscureText: true,
+          obscureText: isObscureText,
         ),
         SizedBox(height: sizedBoxSize),
       ],

@@ -91,18 +91,21 @@ class SignUpPage extends StatelessWidget {
             hintText: "Enter your email",
             title: "Email",
             lastItem: false,
+            isObscureText: false,
           ),
           InputTextField(
             controller: _passwordController,
             hintText: "Enter your password",
             title: "Password",
             lastItem: false,
+            isObscureText: true,
           ),
           InputTextField(
             controller: _passwordConfirmationController,
             hintText: "Enter your password again",
             title: "Confirm Password",
             lastItem: true,
+            isObscureText: true,
           ),
           // Login Button
           SizedBox(

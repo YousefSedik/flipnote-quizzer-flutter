@@ -18,9 +18,12 @@ class CreateQuizPage extends StatelessWidget {
           child: Form(
             child: Column(
               children: [
-                Text(
-                  "Create New Quiz",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Create New Quiz",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                  ),
                 ),
                 SizedBox(height: 20),
                 InputTextField(
@@ -28,12 +31,14 @@ class CreateQuizPage extends StatelessWidget {
                   hintText: "Enter Quiz Title",
                   title: "Quiz Title",
                   lastItem: false,
+                  isObscureText: false,
                 ),
                 InputTextField(
                   controller: _descriptionController,
                   hintText: "Enter Quiz Description ",
                   title: "Quiz Description (Optional)",
                   lastItem: false,
+                  isObscureText: false,
                 ),
                 Row(
                   spacing: 10,

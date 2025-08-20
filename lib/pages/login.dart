@@ -91,12 +91,14 @@ class LoginPage extends StatelessWidget {
             hintText: "Enter your email",
             title: "Email",
             lastItem: false,
+            isObscureText: false,
           ),
           InputTextField(
             controller: _passwordController,
             hintText: "Enter your password",
             title: "Password",
             lastItem: false,
+            isObscureText: true,
           ),
 
           // Login Button
