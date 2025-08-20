@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 
-PreferredSizeWidget getAppBar() {
+PreferredSizeWidget getAppBar({String? title}) {
   return AppBar(
     title: Text(
-      "Flipnote Quizzer",
+      title ?? "Flipnote Quizzer",
       style: TextStyle(fontWeight: FontWeight.bold),
     ),
-    shape: Border(
-      bottom: BorderSide(
-        color: Colors.grey,
-        width: .25,
-      ),
-    ),
+    shape: Border(bottom: BorderSide(color: Colors.grey, width: .25)),
   );
 }
