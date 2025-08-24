@@ -6,7 +6,6 @@ import 'package:project/pages/login.dart';
 import 'package:project/pages/quiz.dart';
 import 'package:project/pages/signup.dart';
 import 'package:project/pages/splash.dart';
-
 void main() {
   runApp(const MyApp());
 }
@@ -30,9 +29,9 @@ class MyApp extends StatelessWidget {
         '/quiz/edit': (context) => EditQuizPage(),
         '/quiz/create': (context) => CreateQuizPage(),
         '/quiz/play': (context) => Quiz(), // Placeholder for quiz play page
-
         // '/home': (context) => const HomePage(),
       },
     );
   }
 }
+
