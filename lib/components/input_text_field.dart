@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 
 class InputTextField extends StatelessWidget {
-  const InputTextField({
+  InputTextField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.title,
     required this.lastItem,
     required this.isObscureText,
+    this.defaultValue,
+    this.other,
   });
   final TextEditingController controller;
   final String hintText;
   final String title;
   final bool lastItem;
   final bool isObscureText;
+  String? defaultValue = "";
+  Map<String, dynamic>? other;
+
+  void setDefaultValue(String value) {
+    defaultValue = value;
+    controller.text = value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +30,9 @@ class InputTextField extends StatelessWidget {
     if (lastItem) {
       sizedBoxSize = 32;
     }
-
+    if (defaultValue != null) {
+      controller.text = defaultValue!;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -36,7 +47,6 @@ class InputTextField extends StatelessWidget {
         ),
         SizedBox(height: 8),
         TextFormField(
-          
           controller: controller,
           style: TextStyle(
             fontSize: 16,
@@ -70,6 +80,7 @@ class InputTextField extends StatelessWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
           obscureText: isObscureText,
+          // ...other,
         ),
         SizedBox(height: sizedBoxSize),
       ],

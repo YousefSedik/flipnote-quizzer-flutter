@@ -24,14 +24,14 @@ class MyApp extends StatelessWidget {
       ),
       home: const SplashPage(),
       routes: {
-        '/login': (context) => const LoginPage(),
-        '/signup': (context) => const SignUpPage(),
-        '/home': (context) => const HomePage(),
-        '/quiz/edit': (context) => const EditQuizPage(),
-        '/quiz/create': (context) =>  CreateQuizPage(),
-        '/quiz/play': (context) => const Quiz(), // Placeholder for quiz play page
-        // '/home': (context) => const HomePage(),
+        '/login': (context) => LoginPage(),
+        '/signup': (context) => SignUpPage(),
+        '/home': (context) => HomePage(),
+        '/quiz/edit': (context) => EditQuizPage(),
+        '/quiz/create': (context) => CreateQuizPage(),
+        '/quiz/play': (context) => Quiz(), // Placeholder for quiz play page
 
+        // '/home': (context) => const HomePage(),
       },
     );
   }

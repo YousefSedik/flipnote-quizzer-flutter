@@ -58,9 +58,14 @@ class _QuizCardState extends State<QuizCard> {
               Text(widget.description, style: TextStyle(color: Colors.black54)),
 
               const SizedBox(height: 10),
-              Text(
-                "👤 ${widget.author}",
-                style: TextStyle(fontSize: 13, color: Colors.black87),
+              Row(
+                children: [
+                  Icon(Icons.person_outline, size: 16, color: Colors.black54),
+                  Text(
+                    "Created by ${widget.author}",
+                    style: TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 4),
@@ -87,7 +92,15 @@ class _QuizCardState extends State<QuizCard> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit_outlined),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                        "/quiz/edit",
+                        arguments: {
+                          'title': widget.title,
+                          'description': widget.description,
+                        },
+                      );
+                    },
                   ),
                   Container(
                     decoration: BoxDecoration(

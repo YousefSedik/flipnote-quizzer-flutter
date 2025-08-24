@@ -3,14 +3,16 @@ import 'package:project/api/api.dart';
 import 'package:project/components/input_text_field.dart';
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
+  SignUpPage({super.key});
   static final TextEditingController _emailController = TextEditingController();
+  static final TextEditingController _usernameController = TextEditingController();
+
   static final TextEditingController _passwordController =
       TextEditingController();
   static final TextEditingController _passwordConfirmationController =
       TextEditingController();
 
-  static final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   static final apiClient = ApiClient();
 
   @override
@@ -94,6 +96,13 @@ class SignUpPage extends StatelessWidget {
             isObscureText: false,
           ),
           InputTextField(
+            controller: _usernameController,
+            hintText: "Username",
+            title: "Username",
+            lastItem: false,
+            isObscureText: false,
+          ),
+          InputTextField(
             controller: _passwordController,
             hintText: "Enter your password",
             title: "Password",
@@ -171,7 +180,7 @@ class SignUpPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "Don't have an account? ",
+                  "Altready have an account? ",
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
@@ -180,10 +189,10 @@ class SignUpPage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/signup');
+                    Navigator.pushReplacementNamed(context, '/login');
                   },
                   child: Text(
-                    "Sign up",
+                    "Login",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

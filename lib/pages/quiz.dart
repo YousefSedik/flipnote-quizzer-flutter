@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:project/components/app_bar.dart';
 import 'package:project/components/quiz_list_viewer.dart';
 
-class Quiz extends StatefulWidget {
+class Quiz extends StatelessWidget {
   const Quiz({super.key});
 
-  @override
-  State<Quiz> createState() => _QuizState();
-}
-
-class _QuizState extends State<Quiz> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +15,7 @@ class _QuizState extends State<Quiz> {
           child: Center(
             child: Column(
               children: [
+                // shuffle, edit if owner, delete 
                 QuizListViewer(),
               ],
             ),

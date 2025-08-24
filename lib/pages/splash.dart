@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
 import 'package:project/pages/home.dart';
+import 'package:project/pages/login.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -21,7 +22,7 @@ class SplashPage extends StatelessWidget {
         } else {
           // return CreateQuizPage();
           return const HomePage();
-          // return const LoginPage();
+          // return LoginPage();
         }
       },
     );

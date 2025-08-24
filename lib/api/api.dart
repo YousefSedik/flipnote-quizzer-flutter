@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-String baseUrl = "http://localhost:8000";
+String baseUrl = "http://10.0.2.2:8000";
 
 class ApiClient {
   final Dio _dio = Dio(BaseOptions(baseUrl: baseUrl));
@@ -47,11 +47,18 @@ class ApiClient {
   }
 
   Future<Response> getProfile() => _dio.get("/auth/profile/");
-  Future<Response> login(String email, String password) {
-    return _dio.post(
+  Future<Response> login(String email, String password) async {
+    Response response = await _dio.post(
       "/auth/login/",
       data: {"email": email, "password": password},
     );
+    if (response.statusCode != 200) {
+      return response;
+    }
+    print("Login successful, storing tokens.");
+    await storage.write(key: "access_token", value: response.data["access"]);
+    await storage.write(key: "refresh_token", value: response.data["refresh"]);
+    return response;
   }
 
   Future<bool> isAuthenticated() async {
@@ -61,20 +68,37 @@ class ApiClient {
           .post("/auth/token/verify/", data: {"token": accessToken})
           .then((response) {
             if (response.statusCode == 200) {
+              print("Token is valid.");
               return true;
             }
           })
           .catchError((error) {
+            print("Token is invalid or expired: $error");
             return false;
           });
     }
+    print("No access token found.");
     return false;
   }
 
-  Future<Response> signup(String email, String password) {
+  Future<Response> signup(
+    String firstName,
+    String lastName,
+    String username,
+    String email,
+    String password1,
+    String password2,
+  ) {
     return _dio.post(
-      "/auth/signup/",
-      data: {"email": email, "password": password},
+      "/auth/register/",
+      data: {
+        "email": email,
+        "password1": password1,
+        "password2": password2,
+        "first_name": firstName,
+        "last_name": lastName,
+        "username": username,
+      },
     );
   }
 

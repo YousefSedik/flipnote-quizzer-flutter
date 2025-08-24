@@ -4,12 +4,12 @@ import 'package:project/components/input_text_field.dart';
 import 'package:project/validators/validators.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
   static final TextEditingController _emailController = TextEditingController();
   static final TextEditingController _passwordController =
       TextEditingController();
 
-  static final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   static final apiClient = ApiClient();
 
   @override
@@ -118,7 +118,7 @@ class LoginPage extends StatelessWidget {
                   fontFamily: 'SF Pro Text',
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
                   apiClient
