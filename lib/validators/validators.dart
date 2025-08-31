@@ -1,11 +1,18 @@
-String? emailValidator(value) {
+String? emailValidator(String? value) {
   if (value == null || value.isEmpty) {
-    return "Please enter your email";
+    return "Email cannot be empty";
   }
-  String pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
-  RegExp regex = RegExp(pattern);
-  if (!regex.hasMatch(value)) {
-    return "Enter a valid email";
+  final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  if (!emailRegex.hasMatch(value)) {
+    return "Enter a valid email address";
   }
-  return null; // means valid
+  return null;
+}
+
+String? notNullOrEmpty(String? value) {
+  if (value != null && value.trim().isNotEmpty) {
+    return null;
+  } else {
+    return "This field cannot be empty";
+  }
 }
