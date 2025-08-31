@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
 import 'package:project/pages/home.dart';
@@ -8,21 +9,16 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 4), () {
-      print("SplashPage: Authentication check complete.");
-    });
-    return FutureBuilder<bool>(
-      future: ApiClient().isAuthenticated(),
+    return FutureBuilder<Response>(
+      future: ApiClient().getProfile(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         }
-        if (snapshot.data == true) {
-          return const HomePage();
+        if (snapshot.hasData && snapshot.data!.statusCode == 200) {
+          return HomePage();
         } else {
-          // return CreateQuizPage();
-          return const HomePage();
-          // return LoginPage();
+          return LoginPage();
         }
       },
     );
