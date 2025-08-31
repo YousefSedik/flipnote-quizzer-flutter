@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-String baseUrl = "http://10.0.2.2:8000";
+String baseUrl = "http://192.168.137.72:8000/";
 
 class ApiClient {
   final Dio _dio = Dio(BaseOptions(baseUrl: baseUrl));
@@ -46,7 +46,19 @@ class ApiClient {
     );
   }
 
-  Future<Response> getProfile() => _dio.get("/auth/profile/");
+  Future<Response> getProfile() {
+    return _dio
+        .get("/auth/profile/")
+        .then((response) {
+          print("Profile fetched successfully.");
+          return response;
+        })
+        .catchError((error) {
+          print("Failed to fetch profile: $error");
+          throw error;
+        });
+  }
+
   Future<Response> login(String email, String password) async {
     Response response = await _dio.post(
       "/auth/login/",
@@ -82,8 +94,6 @@ class ApiClient {
   }
 
   Future<Response> signup(
-    String firstName,
-    String lastName,
     String username,
     String email,
     String password1,
@@ -93,10 +103,10 @@ class ApiClient {
       "/auth/register/",
       data: {
         "email": email,
-        "password1": password1,
+        "password": password1,
         "password2": password2,
-        "first_name": firstName,
-        "last_name": lastName,
+        "first_name": "first_name",
+        "last_name": "last_name",
         "username": username,
       },
     );
@@ -113,5 +123,21 @@ class ApiClient {
 
   Future<Response> getQuiz(String quizId) {
     return _dio.get("quizzes/$quizId");
+  }
+
+  Future<Response> getQuizzes() {
+    return _dio.get("quizzes");
+  }
+
+  Future<Response> createQuiz(Map<String, dynamic> quizData) {
+    return _dio.post("quizzes", data: quizData);
+  }
+
+  Future<Response> extractQuestions(String text) {
+    return _dio.post("/extract-questions", data: {"content": text});
+  }
+
+  Future<Response> deleteQuiz(int id) {
+    return _dio.delete("quizzes/$id");
   }
 }
