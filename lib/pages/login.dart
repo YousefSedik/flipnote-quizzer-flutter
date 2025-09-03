@@ -92,6 +92,11 @@ class LoginPage extends StatelessWidget {
             title: "Email",
             lastItem: false,
             isObscureText: false,
+            other: {
+              "validators": [emailValidator],
+            },
+            // TODO: remove this
+            defaultValue: "admin@admin.com",
           ),
           InputTextField(
             controller: _passwordController,
@@ -99,6 +104,9 @@ class LoginPage extends StatelessWidget {
             title: "Password",
             lastItem: false,
             isObscureText: true,
+            other: {
+              "validators": [notNullOrEmpty],
+            },
           ),
 
           // Login Button
@@ -128,10 +136,8 @@ class LoginPage extends StatelessWidget {
                       )
                       .then((response) {
                         if (response.statusCode == 200) {
-                          print("Login successful!");
                           Navigator.pushReplacementNamed(context, '/home');
                         } else {
-                          print("Login failed: ${response.data}");
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text("Login failed. Please try again."),
@@ -196,3 +202,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
+
+
+// user23@example.com
+// stringstringstring

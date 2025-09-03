@@ -1,8 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:project/api/api.dart';
+import 'package:project/components/black_button.dart';
 import 'package:project/components/quiz_card.dart';
+import 'package:project/models/quizModel.dart';
 
-class MyQuizzesWidget extends StatelessWidget {
-  const MyQuizzesWidget({super.key});
+class MyQuizzesWidget extends StatefulWidget {
+  MyQuizzesWidget({super.key});
+
+  @override
+  State<MyQuizzesWidget> createState() => _MyQuizzesWidgetState();
+}
+
+class _MyQuizzesWidgetState extends State<MyQuizzesWidget> {
+  List<QuizModel> quizzes = [];
+  final ApiClient apiClient = ApiClient();
+  Future<List<QuizModel>> getQuizzes() async {
+    List<QuizModel>? quizzes = [];
+    return await apiClient.getQuizzes().then((response) {
+      if (response.statusCode == 200) {
+        final data = response.data['results'] as List;
+        for (var item in data) {
+          quizzes.add(QuizModel.fromJson(item));
+        }
+      }
+      return quizzes;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,71 +41,47 @@ class MyQuizzesWidget extends StatelessWidget {
                   "My Quizzes",
                   style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24),
                 ),
-                Text("(1 total)"),
+                Text("(${quizzes.length} total)"),
+                IconButton(
+                  color: Colors.blue,
+                  onPressed: () async {
+                    quizzes = await getQuizzes();
+                    setState(() {
+                      quizzes = quizzes;
+                    });
+                  },
+                  icon: Icon(Icons.refresh),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          QuizCard(
-            title: 'Flutter Basics',
-            description: 'Learn the basics of Flutter widgets and layouts',
-            author: 'Yousef',
-            questionCount: 10,
-            createdAt: '2025-08-01',
-            isPrivate: false,
-          ),
-          QuizCard(
-            title: 'Dart Language',
-            description: 'Test your Dart programming skills',
-            author: 'Ali',
-            questionCount: 15,
-            createdAt: '2025-08-10',
-            isPrivate: true,
-          ),
-          QuizCard(
-            title: 'Data Structures',
-            description: 'Questions on arrays, lists, and trees',
-            author: 'Sara',
-            questionCount: 20,
-            createdAt: '2025-07-20',
-            isPrivate: false,
-          ),
-          QuizCard(
-            title: 'OOP Concepts',
-            description: 'Quiz on classes, objects, and inheritance',
-            author: 'Mona',
-            questionCount: 12,
-            createdAt: '2025-08-15',
-            isPrivate: true,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            margin: const EdgeInsets.symmetric(vertical: 16),
-            child: TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, "/quiz/create");
-              },
-
-              style: ButtonStyle(),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 6,
-                children: [
-                  Icon(Icons.add_circle_outline_sharp, color: Colors.white),
-                  Text("Create Quiz", style: TextStyle(color: Colors.white)),
-                ],
+          Column(
+            children: [
+              ...List.generate(quizzes.length, (index) {
+                // print(quizzes[index].timeSince);
+                return QuizCard(
+                  id: quizzes[index].id!,
+                  title: quizzes[index].title!,
+                  description: quizzes[index].description!,
+                  author: quizzes[index].author ?? "Unknown",
+                  questionCount: 3,
+                  createdAt: quizzes[index].createdAt!,
+                  isPrivate: quizzes[index].isPrivate!,
+                  timeSince: quizzes[index].timeSince,
+                );
+              }),
+              BlackButton(
+                text: "Create Quiz",
+                icon: Icon(Icons.add_circle_outline_sharp, color: Colors.white),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/quiz/create");
+                },
               ),
-            ),
+            ],
           ),
         ],
       ),
     );
-  }
-
-  Widget CreateQuizWidget() {
-    return Container();
   }
 }

@@ -5,7 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 final String baseUrl = dotenv.env['BASE_URL'] ?? '';
 
 class ApiClient {
-  final Dio _dio = Dio(BaseOptions(baseUrl: baseUrl));
+  final Dio _dio = Dio(
+    BaseOptions(baseUrl: baseUrl, validateStatus: (status) => true),
+  );
+  
   final storage = const FlutterSecureStorage();
 
   ApiClient() {

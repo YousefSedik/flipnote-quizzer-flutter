@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
 import 'package:project/components/input_text_field.dart';
+import 'package:project/validators/validators.dart';
 
 class SignUpPage extends StatelessWidget {
   SignUpPage({super.key});
   static final TextEditingController _emailController = TextEditingController();
-  static final TextEditingController _usernameController = TextEditingController();
+  static final TextEditingController _usernameController =
+      TextEditingController();
 
   static final TextEditingController _passwordController =
       TextEditingController();
@@ -94,12 +96,17 @@ class SignUpPage extends StatelessWidget {
             title: "Email",
             lastItem: false,
             isObscureText: false,
+            defaultValue: "user121@gmail.com",
+            other: {
+              "validators": [emailValidator],
+            },
           ),
           InputTextField(
             controller: _usernameController,
             hintText: "Username",
             title: "Username",
             lastItem: false,
+            defaultValue: "yousefsedikkk",
             isObscureText: false,
           ),
           InputTextField(
@@ -107,6 +114,7 @@ class SignUpPage extends StatelessWidget {
             hintText: "Enter your password",
             title: "Password",
             lastItem: false,
+            defaultValue: "ggpass1242123",
             isObscureText: true,
           ),
           InputTextField(
@@ -114,6 +122,7 @@ class SignUpPage extends StatelessWidget {
             hintText: "Enter your password again",
             title: "Confirm Password",
             lastItem: true,
+            defaultValue: "ggpass1242123",
             isObscureText: true,
           ),
           // Login Button
@@ -133,42 +142,53 @@ class SignUpPage extends StatelessWidget {
                   fontFamily: 'SF Pro Text',
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  apiClient
-                      .login(
-                        _emailController.value.text,
-                        _passwordController.value.text,
-                      )
-                      .then((response) {
-                        if (response.statusCode == 200) {
-                          print("Login successful!");
-                          Navigator.pushReplacementNamed(context, '/home');
-                        } else {
-                          print("Login failed: ${response.data}");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Login failed. Please try again."),
-                              backgroundColor: Colors.black,
-                            ),
-                          );
-                        }
-                      })
-                      .catchError((error) {
-                        print("Error during login: $error");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "An error occurred. Please try again.",
-                            ),
-                            backgroundColor: Colors.black,
-                          ),
-                        );
-                      });
+                  print(
+                    "${_usernameController.text} ${_emailController.text} ${_passwordController.text} ${_passwordConfirmationController.text}",
+                  );
+
+                  final response = await apiClient.signup(
+                    _usernameController.text,
+                    _emailController.text,
+                    _passwordController.text,
+                    _passwordConfirmationController.text,
+                  );
+                  if (response.statusCode == 201) {
+                    print("signup successful!");
+                    // now, login
+                    await apiClient.login(
+                      _emailController.text,
+                      _passwordController.text,
+                    );
+                    Navigator.pushReplacementNamed(context, '/home');
+                  } else if (response.statusCode == 400) {
+                    final Map<String, dynamic> data = response.data;
+                    var errorMessage = StringBuffer();
+                    errorMessage.write("sign up failed\n");
+                    for (var err in data.keys) {
+                      errorMessage.writeAll([err, ': ', data[err][0], '\n']);
+                    }
+                    print(response.data);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(errorMessage.toString()),
+                        backgroundColor: Colors.black,
+                      ),
+                    );
+                  } else {
+                    print("Error during login: ");
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("An error occurred. Please try again."),
+                        backgroundColor: Colors.black,
+                      ),
+                    );
+                  }
                 }
               },
-              child: Text('Sign in'),
+              child: Text('Signup'),
             ),
           ),
 

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 
 class QuizListViewer extends StatefulWidget {
-  QuizListViewer({super.key, required this.questions});
-  dynamic questions;
-  @override
+  final List questions;
+  String id;
+  QuizListViewer({super.key, required this.questions, required this.id});
+
   State<QuizListViewer> createState() => _QuizCardsGridViewerState();
 }
 
@@ -22,19 +23,15 @@ class _QuizCardsGridViewerState extends State<QuizListViewer> {
         itemCount: widget.questions.length,
         itemBuilder: (context, index) {
           if (widget.questions[index]['type'] == 'mcq') {
-            return Expanded(
-              child: buildQuizCardMCQ(
-                widget.questions[index]['question']!,
-                widget.questions[index]['options']!,
-                widget.questions[index]['answer']!,
-              ),
+            return buildQuizCardMCQ(
+              widget.questions[index]['text']!,
+              widget.questions[index]['choices']!,
+              widget.questions[index]['correct_answer']!,
             );
           } else {
-            return Expanded(
-              child: buildQuizCardWritten(
-                widget.questions[index]['question']!,
-                widget.questions[index]['answer']!,
-              ),
+            return buildQuizCardWritten(
+              widget.questions[index]['text']!,
+              widget.questions[index]['answer']!,
             );
           }
         },
@@ -43,80 +40,69 @@ class _QuizCardsGridViewerState extends State<QuizListViewer> {
   }
 
   Widget buildFlipCard(Widget front, Widget back) {
-    return Expanded(
-      child: FlipCard(
-        fill: Fill
-            .fillBack, // Fill the back side of the card to make in the same size as the front.
-        direction: FlipDirection.HORIZONTAL,
-        side: CardSide.FRONT,
-        front: Container(child: front),
-        back: Container(child: back),
-      ),
+    return FlipCard(
+      direction: FlipDirection.HORIZONTAL,
+      side: CardSide.FRONT,
+      front: front,
+      back: back,
     );
   }
 
-  Widget buildQuizCardMCQ(
-    String question,
-    List<String> options,
-    String answer,
-  ) {
-    return Expanded(
-      child: buildFlipCard(
-        buildQuizCardMCQFront(question, options),
-        buildQuizCardMCQBack(question, options, answer),
-      ),
+  Widget buildQuizCardMCQ(String question, List options, String answer) {
+    return buildFlipCard(
+      buildQuizCardMCQFront(question, options),
+      buildQuizCardMCQBack(question, options, answer),
     );
   }
 
-  Widget buildQuizCardMCQFront(String question, List<String> options) {
+  Widget buildQuizCardMCQFront(String question, List options) {
     return Card(
       child: Center(
-        child: Column(
-          children: [
-            Text(
-              question,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            ...options.map(
-              (option) => Container(
-                width: double.infinity,
-
-                margin: const EdgeInsets.symmetric(
-                  vertical: 4.0,
-                  horizontal: 8.0,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 16.0,
-                ),
-                child: Text(
-                  option,
-                  style: TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            children: [
+              Text(
+                question,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 8),
-          ],
+              const SizedBox(height: 8),
+              ...List.generate(options.length, (index) {
+                return Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 4.0,
+                    horizontal: 8.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 16.0,
+                  ),
+                  child: Text(
+                    options[index],
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildQuizCardMCQBack(
-    String question,
-    List<String> options,
-    String answer,
-  ) {
-    return Expanded(
-      child: Card(
-        child: Center(
+  Widget buildQuizCardMCQBack(String question, List options, String answer) {
+    return Card(
+      child: Center(
+        child: Container(
+          padding: EdgeInsets.all(10),
           child: Column(
             children: [
               Text(
@@ -124,15 +110,17 @@ class _QuizCardsGridViewerState extends State<QuizListViewer> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              ...options.map(
-                (option) => Container(
+              ...List.generate(options.length, (index) {
+                return Container(
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(
                     vertical: 4.0,
                     horizontal: 8.0,
                   ),
                   decoration: BoxDecoration(
-                    color: option == answer ? Colors.green[100] : Colors.white,
+                    color: options[index] == answer
+                        ? Colors.green[100]
+                        : Colors.white,
                     border: Border.all(color: Colors.grey),
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -144,17 +132,17 @@ class _QuizCardsGridViewerState extends State<QuizListViewer> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        option,
+                        options[index],
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(width: 8),
-                      Container(child: getBadge(option, answer, option) ?? Container()),
+                      getBadge(options[index], answer, options[index]) ??
+                          Container(),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
+                );
+              }),
             ],
           ),
         ),
@@ -172,23 +160,34 @@ class _QuizCardsGridViewerState extends State<QuizListViewer> {
   Widget buildQuizCardWrittenFront(String question) {
     return Card(
       color: Colors.white,
-      child: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Text(
           question,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          softWrap: true,
         ),
       ),
     );
   }
 
   Widget buildQuizCardWrittenBack(String answer, String question) {
-    return Expanded(
-      child: Card(
-        child: Center(
-          child: Text(
-            'Q: $question\n\nA: $answer',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            Text(
+              question,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              softWrap: true,
+            ),
+            Text(
+              answer,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              softWrap: true,
+            ),
+          ],
         ),
       ),
     );
@@ -202,13 +201,16 @@ class _QuizCardsGridViewerState extends State<QuizListViewer> {
     return Container(decoration: BoxDecoration(color: Colors.red));
   }
 
-  Widget? getBadge(String chosenAnswer, String correctAnswer, String currentAnswer) {
+  Widget? getBadge(
+    String chosenAnswer,
+    String correctAnswer,
+    String currentAnswer,
+  ) {
     if (chosenAnswer == correctAnswer && correctAnswer == currentAnswer) {
       return Icon(Icons.check_circle, color: Colors.green);
-    } else if (chosenAnswer != correctAnswer && currentAnswer == correctAnswer) {
+    } else if (chosenAnswer != correctAnswer &&
+        currentAnswer == correctAnswer) {
       return Icon(Icons.check_circle, color: Colors.green);
-    } else if (chosenAnswer != correctAnswer && currentAnswer == chosenAnswer) {
-      return Icon(Icons.cancel, color: Colors.red);
     }
     return null;
   }

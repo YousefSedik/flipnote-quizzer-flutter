@@ -80,6 +80,15 @@ class InputTextField extends StatelessWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
           obscureText: isObscureText,
+          validator:  (String? value) {
+            for (Function validator in other?["validators"] ?? []) {
+              String? result = validator(value);
+              if (result != null) {
+                return result;
+              }
+            }
+            return null;
+          },
           // ...other,
         ),
         SizedBox(height: sizedBoxSize),

@@ -33,3 +33,27 @@ class EmptyPlaceholders extends StatelessWidget {
     );
   }
 }
+
+
+// Expanded(
+//   child: quizzes.isEmpty
+//       ? Center(
+//           child: Text(
+//             "No quizzes yet",
+//             style: TextStyle(fontSize: 16, color: Colors.grey),
+//           ),
+//         )
+//       : ListView.builder(
+//           itemCount: quizzes.length,
+//           itemBuilder: (BuildContext context, int index) {
+//             return QuizCard(
+//               title: quizzes[index].title,
+//               description: quizzes[index].description,
+//               author: 'Yousef',
+//               questionCount: 3,
+//               createdAt: '2025-08-01',
+//               isPrivate: false,
+//             );
+//           },
+//         ),
+// ),
