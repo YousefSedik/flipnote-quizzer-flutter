@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-String baseUrl = "http://192.168.137.72:8000/";
+final String baseUrl = dotenv.env['BASE_URL'] ?? '';
 
 class ApiClient {
   final Dio _dio = Dio(BaseOptions(baseUrl: baseUrl));
@@ -137,7 +138,15 @@ class ApiClient {
     return _dio.post("/extract-questions", data: {"content": text});
   }
 
-  Future<Response> deleteQuiz(int id) {
+  Future<Response> deleteQuiz(String id) {
     return _dio.delete("quizzes/$id");
+  }
+
+  Future<Response> deleteQuestion(int id, String type) {
+    return _dio.delete("questions/$id/$type");
+  }
+
+  Future<Response> getQuestions(String id) {
+    return _dio.get("questions/$id");
   }
 }
