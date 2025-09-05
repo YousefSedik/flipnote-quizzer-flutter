@@ -6,14 +6,17 @@ import 'package:project/api/api.dart';
 import 'package:project/components/black_button.dart';
 import 'package:project/components/input_text_field.dart';
 import 'package:project/utils.dart';
+import 'package:get/get.dart';
+enum questionTypes { Written, MCQ }
 
 class ManageQuestions extends StatefulWidget {
   ManageQuestions({super.key, required this.questions});
-  final List<Map<String, String>> questions;
-  final TextEditingController _writtenQuestionsController =
-      TextEditingController();
-  final TextEditingController _writtenAnswersController =
-      TextEditingController();
+  List<Map<String, String>> questions;
+  final TextEditingController _questionController = TextEditingController();
+  final TextEditingController _answerController = TextEditingController();
+  final TextEditingController _optionsController = TextEditingController();
+  List<String> options = [];
+  questionTypes questionType = questionTypes.Written;
 
   @override
   State<ManageQuestions> createState() => _ManageQuestionsState();
@@ -48,17 +51,7 @@ class _ManageQuestionsState extends State<ManageQuestions> {
                   IconButton(
                     icon: Icon(Icons.edit_outlined),
                     onPressed: () {
-                      // TODO: implement delete question  
-                      _dio.deleteQuestion(12, "das").then((response) {
-                        if (response.statusCode == 200) {
-                          print("Question deleted successfully");
-                        } else {
-                          print("Failed to delete question");
-                        }
-                        setState(() {
-                          widget.questions.removeAt(index);
-                        });
-                      });
+                      // TODO: implement delete question
                     },
                   ),
                   IconButton(
@@ -91,7 +84,7 @@ class _ManageQuestionsState extends State<ManageQuestions> {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: showModalBottomSheetBuilder,
+            builder: writtenQuestionModalBottomSheetBuilder,
           );
         },
         child: SizedBox(
@@ -110,7 +103,11 @@ class _ManageQuestionsState extends State<ManageQuestions> {
     );
   }
 
-  Widget showModalBottomSheetBuilder(BuildContext context) {
+  Widget questionTypeSwitcher(BuildContext context) {
+    return Switch(value: true, onChanged: (v) {});
+  }
+
+  Widget writtenQuestionModalBottomSheetBuilder(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -124,14 +121,50 @@ class _ManageQuestionsState extends State<ManageQuestions> {
             mainAxisSize: MainAxisSize.min,
             children: [
               InputTextField(
-                controller: widget._writtenQuestionsController,
+                controller: widget._questionController,
                 hintText: "Question",
                 title: 'Question',
                 lastItem: false,
                 isObscureText: false,
               ),
               InputTextField(
-                controller: widget._writtenAnswersController,
+                controller: widget._answerController,
+                hintText: "Answer",
+                title: 'Answer',
+                lastItem: true,
+                isObscureText: false,
+              ),
+              BlackButton(text: "Add", onPressed: addQuestion),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget MCQModalBottomSheetBuilder(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InputTextField(
+                controller: widget._questionController,
+                hintText: "Question",
+                title: 'Question',
+                lastItem: false,
+                isObscureText: false,
+              ),
+              InputTextField(
+                controller: widget._optionsController,
                 hintText: "Answer",
                 title: 'Answer',
                 lastItem: true,
@@ -150,14 +183,14 @@ class _ManageQuestionsState extends State<ManageQuestions> {
     setState(() {
       widget.questions.add({
         'type': 'written',
-        'question': widget._writtenQuestionsController.text,
-        'answer': widget._writtenAnswersController.text,
+        'question': widget._questionController.text,
+        'answer': widget._answerController.text,
       });
-      widget._writtenQuestionsController.clear();
-      widget._writtenAnswersController.clear();
+      widget._questionController.clear();
+      widget._answerController.clear();
       print(widget.questions);
     });
-    Navigator.pop(context);
+    Get.back();
   }
 
   Widget uploadPDF() {

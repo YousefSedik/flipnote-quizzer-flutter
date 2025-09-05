@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:project/components/my_quizzes.dart';
 import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.logout),
             onPressed: () async {
               await storage.deleteAll();
-              Navigator.pushReplacementNamed(context, "/login");
+              Get.offAllNamed('/login');
             },
           ),
         ],
@@ -37,14 +38,10 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
-            child: Column(
-              children: [
-                MyQuizzesWidget(),
-              ],
-            ),
+            child: Column(children: [MyQuizzesWidget()]),
           ),
         ),
-      ) ,
+      ),
     );
   }
 }

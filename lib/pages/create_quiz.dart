@@ -6,6 +6,7 @@ import 'package:project/components/input_text_field.dart';
 import 'package:project/components/manage_questions.dart';
 import 'package:project/models/quizModel.dart';
 import 'package:project/validators/validators.dart';
+import 'package:get/get.dart';
 
 class CreateQuizPage extends StatefulWidget {
   CreateQuizPage({super.key});
@@ -19,7 +20,7 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ApiClient apiClient = ApiClient();
-  
+
   bool isPublic = true;
 
   @override
@@ -38,7 +39,10 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Create New Quiz",
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ),
                   SizedBox(height: 20),
@@ -92,7 +96,7 @@ class _CreateQuizPageState extends State<CreateQuizPage> {
                         ).toMap();
                         await apiClient.createQuiz(newQuiz).then((response) {
                           if (response.statusCode == 201) {
-                            Navigator.pop(context);
+                            Get.back();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

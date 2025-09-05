@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
 import 'package:project/components/input_text_field.dart';
 import 'package:project/validators/validators.dart';
-
+import 'package:get/get.dart';
 class SignUpPage extends StatelessWidget {
   SignUpPage({super.key});
   static final TextEditingController _emailController = TextEditingController();
@@ -162,7 +162,7 @@ class SignUpPage extends StatelessWidget {
                       _emailController.text,
                       _passwordController.text,
                     );
-                    Navigator.pushReplacementNamed(context, '/home');
+                    Get.offAllNamed('/home');
                   } else if (response.statusCode == 400) {
                     final Map<String, dynamic> data = response.data;
                     var errorMessage = StringBuffer();
@@ -170,7 +170,6 @@ class SignUpPage extends StatelessWidget {
                     for (var err in data.keys) {
                       errorMessage.writeAll([err, ': ', data[err][0], '\n']);
                     }
-                    print(response.data);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(errorMessage.toString()),
@@ -178,7 +177,6 @@ class SignUpPage extends StatelessWidget {
                       ),
                     );
                   } else {
-                    print("Error during login: ");
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text("An error occurred. Please try again."),
@@ -209,7 +207,7 @@ class SignUpPage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/login');
+                    Get.offAllNamed('/login');
                   },
                   child: Text(
                     "Login",

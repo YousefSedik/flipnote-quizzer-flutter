@@ -3,7 +3,7 @@ import 'package:project/api/api.dart';
 import 'package:project/components/black_button.dart';
 import 'package:project/components/quiz_card.dart';
 import 'package:project/models/quizModel.dart';
-
+import 'package:get/get.dart';
 class MyQuizzesWidget extends StatefulWidget {
   MyQuizzesWidget({super.key});
 
@@ -74,8 +74,8 @@ class _MyQuizzesWidgetState extends State<MyQuizzesWidget> {
               BlackButton(
                 text: "Create Quiz",
                 icon: Icon(Icons.add_circle_outline_sharp, color: Colors.white),
-                onPressed: () {
-                  Navigator.pushNamed(context, "/quiz/create");
+                onPressed: () async{
+                  await Get.toNamed("/quiz/create");
                 },
               ),
             ],

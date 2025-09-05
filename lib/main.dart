@@ -7,6 +7,7 @@ import 'package:project/pages/login.dart';
 import 'package:project/pages/quiz.dart';
 import 'package:project/pages/signup.dart';
 import 'package:project/pages/splash.dart';
+import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,22 +24,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flipnote Quizzer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const SplashPage(),
-      routes: {
-        '/login': (context) => LoginPage(),
-        '/signup': (context) => SignUpPage(),
-        '/home': (context) => HomePage(),
-        '/quiz/edit': (context) => EditQuizPage(),
-        '/quiz/create': (context) => CreateQuizPage(),
-        '/quiz/play': (context) => Quiz(), // Placeholder for quiz play page
-        // '/home': (context) => const HomePage(),
-      },
+      getPages: [
+        GetPage(name: "/login", page: () => LoginPage()),
+        GetPage(name: "/signup", page: () => SignUpPage()),
+        GetPage(name: "/home", page: () => HomePage()),
+        GetPage(name: "/quiz/edit", page: () => EditQuizPage()),
+        GetPage(name: "/quiz/create", page: () => CreateQuizPage()),
+        GetPage(name: "/quiz/play", page: () => Quiz()),
+      ],
     );
   }
 }

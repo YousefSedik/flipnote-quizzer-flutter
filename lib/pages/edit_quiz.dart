@@ -5,7 +5,7 @@ import 'package:project/components/black_button.dart';
 import 'package:project/components/input_text_field.dart';
 import 'package:project/components/manage_questions.dart';
 import 'package:project/models/quizModel.dart';
-
+import 'package:get/get.dart';
 class EditQuizPage extends StatefulWidget {
   EditQuizPage({super.key});
 
@@ -118,7 +118,7 @@ class _EditQuizPageState extends State<EditQuizPage> {
                         ).toMap();
                         await apiClient.createQuiz(newQuiz).then((response) {
                           if (response.statusCode == 201) {
-                            Navigator.pop(context);
+                            Get.back();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

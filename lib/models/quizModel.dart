@@ -30,7 +30,7 @@ class QuizModel {
     this.timeSince,
   });
   Future<void> getData()async {
-
+    
   }
   Future<void> fetchQuestions(String id) async {
     final response = await apiClient.getQuestions(id);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
 import 'package:project/components/input_text_field.dart';
 import 'package:project/validators/validators.dart';
-
+import 'package:get/get.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
   static final TextEditingController _emailController = TextEditingController();
@@ -136,7 +136,7 @@ class LoginPage extends StatelessWidget {
                       )
                       .then((response) {
                         if (response.statusCode == 200) {
-                          Navigator.pushReplacementNamed(context, '/home');
+                          Get.offAllNamed('/home');
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -180,7 +180,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/signup');
+                    Get.offAllNamed('/signup');
                   },
                   child: Text(
                     "Sign up",

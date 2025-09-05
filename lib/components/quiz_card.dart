@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
-
+import 'package:get/get.dart';
 class QuizCard extends StatefulWidget {
   QuizCard({
     super.key,
@@ -133,14 +133,12 @@ class _QuizCardState extends State<QuizCard> {
                   IconButton(
                     icon: const Icon(Icons.edit_outlined),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        "/quiz/edit",
-                        arguments: {
-                          'title': widget.title,
-                          'description': widget.description,
-                          'isPrivate': widget.isPrivate,
-                        },
-                      );
+                      Get.toNamed("/quiz/edit", arguments: {
+                        'id': widget.id,
+                        'title': widget.title,
+                        'description': widget.description,
+                        'isPrivate': widget.isPrivate,
+                      });
                     },
                   ),
                   Container(
@@ -152,22 +150,16 @@ class _QuizCardState extends State<QuizCard> {
                       icon: const Icon(Icons.play_arrow, color: Colors.white),
                       onPressed: () async {
                         List questions = await fetchQuestions(widget.id);
-                        // print("questions:");
-                        // print(questions);
-                        Navigator.pushNamed(
-                          context,
-                          "/quiz/play",
-                          arguments: {
-                            'id': widget.id,
-                            'title': widget.title,
-                            'description': widget.description,
-                            'author': widget.author,
-                            'questionCount': widget.questionCount,
-                            'createdAt': widget.createdAt,
-                            'isPrivate': widget.isPrivate,
-                            'questions': questions,
-                          },
-                        );
+                        Get.toNamed("/quiz/play", arguments: {
+                          'id': widget.id,
+                          'title': widget.title,
+                          'description': widget.description,
+                          'author': widget.author,
+                          'questionCount': widget.questionCount,
+                          'createdAt': widget.createdAt,
+                          'isPrivate': widget.isPrivate,
+                          'questions': questions,
+                        });
                       },
                     ),
                   ),
