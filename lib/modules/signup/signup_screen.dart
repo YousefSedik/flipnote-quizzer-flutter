@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
-import 'package:project/components/input_text_field.dart';
+import 'package:project/modules/signup/signup_controller.dart';
+import 'package:project/widgets/input_text_field.dart';
 import 'package:project/validators/validators.dart';
 import 'package:get/get.dart';
+
 class SignUpPage extends StatelessWidget {
   SignUpPage({super.key});
-  static final TextEditingController _emailController = TextEditingController();
-  static final TextEditingController _usernameController =
-      TextEditingController();
-
-  static final TextEditingController _passwordController =
-      TextEditingController();
-  static final TextEditingController _passwordConfirmationController =
-      TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
-  static final apiClient = ApiClient();
+  final SignupController controller = Get.put(SignupController());
 
   @override
   Widget build(BuildContext context) {
@@ -85,13 +77,13 @@ class SignUpPage extends StatelessWidget {
 
   Widget buildLoginForm(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: controller.formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           InputTextField(
-            controller: _emailController,
+            controller: controller.emailController,
             hintText: "Enter your email",
             title: "Email",
             lastItem: false,
@@ -102,7 +94,7 @@ class SignUpPage extends StatelessWidget {
             },
           ),
           InputTextField(
-            controller: _usernameController,
+            controller: controller.usernameController,
             hintText: "Username",
             title: "Username",
             lastItem: false,
@@ -110,7 +102,7 @@ class SignUpPage extends StatelessWidget {
             isObscureText: false,
           ),
           InputTextField(
-            controller: _passwordController,
+            controller: controller.passwordController,
             hintText: "Enter your password",
             title: "Password",
             lastItem: false,
@@ -118,7 +110,7 @@ class SignUpPage extends StatelessWidget {
             isObscureText: true,
           ),
           InputTextField(
-            controller: _passwordConfirmationController,
+            controller: controller.passwordConfirmationController,
             hintText: "Enter your password again",
             title: "Confirm Password",
             lastItem: true,
@@ -143,51 +135,29 @@ class SignUpPage extends StatelessWidget {
                 ),
               ),
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  print(
-                    "${_usernameController.text} ${_emailController.text} ${_passwordController.text} ${_passwordConfirmationController.text}",
-                  );
-
-                  final response = await apiClient.signup(
-                    _usernameController.text,
-                    _emailController.text,
-                    _passwordController.text,
-                    _passwordConfirmationController.text,
-                  );
-                  if (response.statusCode == 201) {
-                    print("signup successful!");
-                    // now, login
-                    await apiClient.login(
-                      _emailController.text,
-                      _passwordController.text,
-                    );
-                    Get.offAllNamed('/home');
-                  } else if (response.statusCode == 400) {
-                    final Map<String, dynamic> data = response.data;
-                    var errorMessage = StringBuffer();
-                    errorMessage.write("sign up failed\n");
-                    for (var err in data.keys) {
-                      errorMessage.writeAll([err, ': ', data[err][0], '\n']);
-                    }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(errorMessage.toString()),
-                        backgroundColor: Colors.black,
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("An error occurred. Please try again."),
-                        backgroundColor: Colors.black,
-                      ),
-                    );
-                  }
+                if (controller.formKey.currentState!.validate()) {
+                  controller.formKey.currentState!.save();
+                  controller.setLoading(true);
+                  await controller.signUp();
+                  controller.setLoading(false);
                 }
               },
-              child: Text('Signup'),
+              child: GetBuilder(builder: (SignupController c) {
+                if (c.isLoading) {
+                  return SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  );
+                } else {
+                  return Text("Sign Up");
+                }
+              }
             ),
+          ),
           ),
 
           SizedBox(height: 24),

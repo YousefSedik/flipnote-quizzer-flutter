@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:project/api/api.dart';
-import 'package:project/components/input_text_field.dart';
+import 'package:project/modules/login/login_controller.dart';
+import 'package:project/widgets/input_text_field.dart';
 import 'package:project/validators/validators.dart';
 import 'package:get/get.dart';
+
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
-  static final TextEditingController _emailController = TextEditingController();
-  static final TextEditingController _passwordController =
-      TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
-  static final apiClient = ApiClient();
+  LoginController controller = Get.put<LoginController>(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,14 +77,14 @@ class LoginPage extends StatelessWidget {
 
   Widget buildLoginForm(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: controller.formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Email Field
           InputTextField(
-            controller: _emailController,
+            controller: controller.emailController,
             hintText: "Enter your email",
             title: "Email",
             lastItem: false,
@@ -99,7 +96,7 @@ class LoginPage extends StatelessWidget {
             defaultValue: "admin@admin.com",
           ),
           InputTextField(
-            controller: _passwordController,
+            controller: controller.passwordController,
             hintText: "Enter your password",
             title: "Password",
             lastItem: false,
@@ -107,6 +104,7 @@ class LoginPage extends StatelessWidget {
             other: {
               "validators": [notNullOrEmpty],
             },
+            defaultValue: "admin",
           ),
 
           // Login Button
@@ -127,39 +125,28 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  apiClient
-                      .login(
-                        _emailController.value.text,
-                        _passwordController.value.text,
-                      )
-                      .then((response) {
-                        if (response.statusCode == 200) {
-                          Get.offAllNamed('/home');
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Login failed. Please try again."),
-                              backgroundColor: Colors.black,
-                            ),
-                          );
-                        }
-                      })
-                      .catchError((error) {
-                        print("Error during login: $error");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "An error occurred. Please try again.",
-                            ),
-                            backgroundColor: Colors.black,
-                          ),
-                        );
-                      });
+                if (controller.formKey.currentState!.validate()) {
+                  controller.formKey.currentState!.save();
+                  controller.setLoading(true);
+                  controller.login();
                 }
               },
-              child: Text('Sign in'),
+              child: GetBuilder(
+                builder: (LoginController controller) {
+                  if (controller.isLoading) {
+                    return SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    );
+                  } else {
+                    return Text('Sign in');
+                  }
+                },
+              ),
             ),
           ),
 
@@ -202,7 +189,3 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-
-
-// user23@example.com
-// stringstringstring

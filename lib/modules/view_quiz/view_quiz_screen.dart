@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project/components/app_bar.dart';
-import 'package:project/components/black_button.dart';
-import 'package:project/components/quiz_list_viewer.dart';
+import 'package:project/widgets/app_bar.dart';
+import 'package:project/widgets/black_button.dart';
+import 'package:project/widgets/quiz_list_viewer.dart';
 
 class Quiz extends StatefulWidget {
   Quiz({super.key});

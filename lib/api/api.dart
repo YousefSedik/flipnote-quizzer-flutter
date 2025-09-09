@@ -8,20 +8,30 @@ class ApiClient {
   final Dio _dio = Dio(
     BaseOptions(baseUrl: baseUrl, validateStatus: (status) => true),
   );
-  
+
   final storage = const FlutterSecureStorage();
 
   ApiClient() {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          print("from onRequest API Client initialized with base URL: $baseUrl");
           final accessToken = await storage.read(key: "access_token");
+          final refreshToken = await storage.read(key: "refresh_token");
+          print("Access token: $accessToken");
+          print("Refresh token: $refreshToken");
           if (accessToken != null) {
             options.headers["Authorization"] = "Bearer $accessToken";
           }
           return handler.next(options);
         },
         onError: (DioException e, handler) async {
+          print("API Client initialized with base URL: $baseUrl");
+          final accessToken = await storage.read(key: "access_token");
+          final refreshToken = await storage.read(key: "refresh_token");
+          print("Access token: $accessToken");
+          print("Refresh token: $refreshToken");
+          print(e.response?.statusCode);
           if (e.response?.statusCode == 401) {
             // try refresh
             final refreshToken = await storage.read(key: "refresh_token");
@@ -39,7 +49,7 @@ class ApiClient {
                 final retryResponse = await _dio.fetch(e.requestOptions);
                 return handler.resolve(retryResponse);
               } catch (refreshError) {
-                // refresh failed → logout user
+                // refresh failed → clear tokens & force logout
                 await storage.deleteAll();
               }
             }
@@ -49,11 +59,14 @@ class ApiClient {
       ),
     );
   }
-
+  //  
   Future<Response> getProfile() {
     return _dio
         .get("/auth/profile/")
         .then((response) {
+          if (response.statusCode != 200){
+            throw Error();
+          }
           print("Profile fetched successfully.");
           return response;
         })
@@ -90,7 +103,8 @@ class ApiClient {
           })
           .catchError((error) {
             print("Token is invalid or expired: $error");
-            return false;
+            // try to refresh it
+
           });
     }
     print("No access token found.");
@@ -129,7 +143,7 @@ class ApiClient {
     return _dio.get("quizzes/$quizId");
   }
 
-  Future<Response> getQuizzes() {
+  Future<Response> getMyQuizzes() {
     return _dio.get("quizzes");
   }
 
@@ -145,11 +159,38 @@ class ApiClient {
     return _dio.delete("quizzes/$id");
   }
 
-  Future<Response> deleteQuestion(int id, String type) {
+  Future<Response> deleteQuestion(String id, String type) {
     return _dio.delete("questions/$id/$type");
   }
 
   Future<Response> getQuestions(String id) {
     return _dio.get("questions/$id");
+  }
+
+  Future<Response> createQuestion(Map<String, dynamic> map, String id) {
+    return _dio.post("quizzes/$id/questions", data: map);
+  }
+
+  Future<Response> updateMCQQuestion(
+    Map<String, dynamic> data,
+    String Quizid,
+    String questionId,
+  ) {
+    return _dio.put("quizzes/$Quizid/questions/$questionId/mcq", data: data);
+  }
+
+  Future<Response> updateWrittenQuestion(
+    Map<String, dynamic> data,
+    String Quizid,
+    String questionId,
+  ) {
+    return _dio.put(
+      "quizzes/$Quizid/questions/$questionId/written",
+      data: data,
+    );
+  }
+
+  Future<Response> updateQuiz(Map<String, dynamic> map) async {
+    return _dio.put("quizzes/${map['id']}", data: map);
   }
 }

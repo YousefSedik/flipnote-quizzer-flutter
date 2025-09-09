@@ -80,7 +80,8 @@ class InputTextField extends StatelessWidget {
             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
           obscureText: isObscureText,
-          validator:  (String? value) {
+          onSaved: other?["onSaved"],
+          validator: (String? value) {
             for (Function validator in other?["validators"] ?? []) {
               String? result = validator(value);
               if (result != null) {

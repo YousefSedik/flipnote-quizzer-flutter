@@ -1,23 +1,15 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:project/components/my_quizzes.dart';
+import 'package:project/modules/home/home_controller.dart';
+import 'package:project/widgets/my_quizzes.dart';
 import 'package:flutter/material.dart';
-import 'package:project/api/api.dart';
 import 'package:get/get.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final ApiClient apiClient = ApiClient();
-
+  final HomeController controller = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
     final storage = const FlutterSecureStorage();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -28,7 +20,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {
-              await storage.deleteAll();
+              await storage.delete(key: "access_token");
+              await storage.delete(key: "refresh_token");
               Get.offAllNamed('/login');
             },
           ),
@@ -37,6 +30,14 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.black,
+            child: Icon(Icons.add, color: Colors.white),
+            onPressed: () async{
+              await Get.toNamed("/quiz/create");
+              controller.fetchQuizzes();
+            },
+          ),
           body: SingleChildScrollView(
             child: Column(children: [MyQuizzesWidget()]),
           ),

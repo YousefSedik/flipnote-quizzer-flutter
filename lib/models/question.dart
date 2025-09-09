@@ -1,10 +1,10 @@
 class WrittenQuestion {
-  int id;
+  int? id;
   String question;
   String answer;
 
   WrittenQuestion({
-    required this.id,
+    this.id,
     required this.question,
     required this.answer,
   });
@@ -23,16 +23,18 @@ class WrittenQuestion {
       id: json['id'],
     );
   }
+
+  toMap() {}
 }
 
 class MultipleChoiceQuestion {
   MultipleChoiceQuestion({
-    required this.id,
+    this.id,
     required this.question,
     required this.answer,
     required this.options,
   });
-  int id;
+  int? id;
   String question;
   String answer;
   List<String> options;
@@ -40,15 +42,15 @@ class MultipleChoiceQuestion {
     'id': id,
     'type': 'mcq',
     'text': question,
-    'answer': answer,
-    'options': options,
+    'correct_answer': answer,
+    'choices': options,
   };
   factory MultipleChoiceQuestion.fromJson(Map<String, dynamic> json) {
     return MultipleChoiceQuestion(
       id: json['id'],
       question: json['text'],
-      answer: json['answer'],
-      options: List<String>.from(json['options']),
+      answer: json['correct_answer'],
+      options: List<String>.from(json['choices']),
     );
   }
 }

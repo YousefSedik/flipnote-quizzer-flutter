@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 
-class BlackButton extends StatefulWidget {
+class BlackButton extends StatelessWidget {
   BlackButton({super.key, required this.text, this.onPressed, this.icon});
   final String text;
   Icon? icon;
   Function()? onPressed;
 
-  @override
-  State<BlackButton> createState() => _BlackButtonState();
-}
-
-class _BlackButtonState extends State<BlackButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -24,15 +19,15 @@ class _BlackButtonState extends State<BlackButton> {
           ),
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
-        onPressed: widget.onPressed,
+        onPressed: onPressed,
 
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 7,
           children: [
-            widget.icon ?? Container(),
+            icon ?? Container(),
             Text(
-              widget.text,
+              text,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

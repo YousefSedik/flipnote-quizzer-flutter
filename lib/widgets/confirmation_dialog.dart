@@ -31,7 +31,6 @@ Future<void> _showConfirmationDialog(
   );
 
   if (confirmed == true) {
-    // Perform the action after confirmation
     print('Item deleted!');
   } else {
     print('Deletion canceled.');

@@ -5,7 +5,7 @@ class QuizModel {
   String? id;
   String? title;
   String? description;
-  bool? isPrivate;
+  bool isPublic = true;
   int viewsCount;
   final String? author;
   final int? questionCount;
@@ -20,18 +20,14 @@ class QuizModel {
     this.id,
     this.title,
     this.description,
-    this.isPrivate,
+    this.isPublic = true,
     this.author,
     this.createdAt,
     this.questionCount,
     this.viewsCount = 0,
-    this.MCQQuestions = const [],
-    this.writtenQuestions = const [],
     this.timeSince,
   });
-  Future<void> getData()async {
-    
-  }
+  Future<void> getData() async {}
   Future<void> fetchQuestions(String id) async {
     final response = await apiClient.getQuestions(id);
     if (response.statusCode == 200) {
@@ -68,7 +64,7 @@ class QuizModel {
       author: quizJson['owner_username'] ?? 'Unknown',
       questionCount: quizJson['question_count'] ?? 0,
       createdAt: quizJson['created_at'] ?? '',
-      isPrivate: !quizJson['is_public'],
+      isPublic: quizJson['is_public'],
       viewsCount: quizJson['views_count'] ?? 0,
       timeSince: quizJson['time_since'],
     );
@@ -79,7 +75,7 @@ class QuizModel {
       'id': id,
       'title': title,
       'description': description,
-      'is_private': isPrivate,
+      'is_public': isPublic,
       'author': author,
       'created_at': createdAt,
       'question_count': questionCount,
