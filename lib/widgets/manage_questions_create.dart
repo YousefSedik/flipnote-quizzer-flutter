@@ -262,8 +262,11 @@ class ManageQuestionsCreate extends StatelessWidget {
                                 decoration: InputDecoration(
                                   hintText: "Option ${index + 1}",
                                 ),
-                                onChanged: (val) =>
-                                    controller.updateOption(index, val),
+                                onChanged: (val) {
+                                  controller.updateOption(index, val);
+                                  controller.options[index].controller.text =
+                                      val;
+                                },
                               ),
                               trailing: IconButton(
                                 icon: Icon(Icons.delete),
@@ -408,3 +411,5 @@ class ManageQuestionsCreate extends StatelessWidget {
     );
   }
 }
+// Role Based [teacher, student]
+// Score System [student =>  10/50 => solve correct for 10 quizs from 50]

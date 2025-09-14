@@ -109,20 +109,6 @@ class QuizController extends SharedQuizController {
     refresh(); // notify UI
   }
 
-  void selectCorrectAnswer(int index) {
-    print("Selecting correct answer $index");
-    for (int i = 0; i < options.length; i++) {
-      options[i].isCorrect = (i == index);
-      answerController.text = options[index].text;
-    }
-    refresh();
-  }
-
-  void removeOption(int index) {
-    print("Removing option $index");
-    options.removeAt(index);
-    refresh();
-  }
 
   Future<void> createQuiz() async {
     // first create the quiz, then add the questions

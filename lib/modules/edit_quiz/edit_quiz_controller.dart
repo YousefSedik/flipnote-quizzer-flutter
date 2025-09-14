@@ -115,43 +115,6 @@ class EditQuizController extends SharedQuizController {
     return true;
   }
 
-  void addOption(String option) {
-    print("Adding option");
-    options.add(Option(text: option));
-    selectCorrectAnswer(0);
-    refresh(); // notify UI
-  }
-
-  void updateOption(int index, String text) {
-    print("Updating option $index to $text");
-    options[index].text = text;
-    refresh(); // notify UI
-  }
-
-  void selectCorrectAnswer(int index) {
-    print("Selecting correct answer $index");
-    for (int i = 0; i < options.length; i++) {
-      options[i].isCorrect = (i == index);
-      answerController.text = options[index].text;
-    }
-    refresh();
-  }
-
-  void removeOption(int index) {
-    print("Removing option $index with value ${options[index].text}");
-    print("Options before removal:");
-    for (var opt in options) {
-      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
-    }
-
-    options.removeAt(index);
-    print("Options after removal:");
-    for (var opt in options) {
-      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
-    }
-    refresh();
-  }
-
   void removeMCQQuestion(int index) {
     if (quiz.MCQQuestions[index].id != null) {
       toDelete.add({"id": quiz.MCQQuestions[index].id, "type": "mcq"});
@@ -165,16 +128,6 @@ class EditQuizController extends SharedQuizController {
       toDelete.add({"id": quiz.writtenQuestions[index].id, "type": "written"});
     }
     quiz.writtenQuestions.removeAt(index);
-    refresh();
-  }
-
-  void makePrivate() {
-    quiz.isPublic = false;
-    refresh();
-  }
-
-  void makePublic() {
-    quiz.isPublic = true;
     refresh();
   }
 

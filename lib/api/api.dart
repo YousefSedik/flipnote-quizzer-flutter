@@ -117,13 +117,6 @@ class ApiClient {
     return _dio.post("quizzes/$id/questions", data: map);
   }
 
-  Future<Response> updateMCQQuestion(
-    Map<String, dynamic> data,
-    String Quizid,
-    String questionId,
-  ) {
-    return _dio.put("quizzes/$Quizid/questions/$questionId/mcq", data: data);
-  }
 
   Future<Response> updateWrittenQuestion(
     Map<String, dynamic> data,

@@ -262,11 +262,14 @@ class ManageQuestionsEdit extends StatelessWidget {
                                     controller.selectCorrectAnswer(index),
                               ),
                               title: TextField(
+                                controller: option.controller,
                                 decoration: InputDecoration(
                                   hintText: "Option ${index + 1}",
                                 ),
-                                onChanged: (val) =>
-                                    controller.updateOption(index, val),
+                                onChanged: (val) {
+                                  controller.updateOption(index, val);
+                                  controller.options[index].controller.text = val;
+                                },
                               ),
                               trailing: IconButton(
                                 icon: Icon(Icons.delete),

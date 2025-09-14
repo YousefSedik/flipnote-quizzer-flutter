@@ -1,16 +1,14 @@
-import 'dart:developer';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/models/question.dart';
 import 'package:project/models/quizModel.dart';
-import 'package:project/modules/create_quiz/create_quiz_services.dart';
 import 'package:project/utils.dart';
 
 class Option {
   String text;
   bool isCorrect;
+  TextEditingController controller = TextEditingController();
   Option({required this.text, this.isCorrect = false});
 }
 
@@ -21,8 +19,6 @@ class SharedQuizController extends GetxController {
   final TextEditingController answerController = TextEditingController();
   List<Option> options = [];
   QuizModel quiz = QuizModel();
-
-
 
   Future<bool> addWrittenQuestion() async {
     if (questionController.text.isEmpty || answerController.text.isEmpty) {
@@ -53,33 +49,41 @@ class SharedQuizController extends GetxController {
   void addOption(String option) {
     print("Adding option");
     options.add(Option(text: option));
-    selectCorrectAnswer(0);
-    refresh(); // notify UI
+    if (options.length == 1) {
+      selectCorrectAnswer(0);
+    }
+    refresh();
   }
 
   void updateOption(int index, String text) {
     print("Updating option $index to $text");
     options[index].text = text;
-    refresh(); // notify UI
+    refresh();
   }
 
   void selectCorrectAnswer(int index) {
-    print("Selecting correct answer $index");
     for (int i = 0; i < options.length; i++) {
       options[i].isCorrect = (i == index);
-      answerController.text = options[index].text;
+      if (options[index].isCorrect) {
+        answerController.text = options[index].text;
+      }
     }
     refresh();
   }
 
   void removeOption(int index) {
-    print("Removing option $index");
-    options.removeAt(index);
-    refresh();
-  }
+    print("Removing option $index with value ${options[index].text}");
+    print("Options before removal:");
+    for (var opt in options) {
+      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
+    }
 
-  void removeMCQQuestion(int index) {
-    quiz.MCQQuestions.removeAt(index);
+    options.removeAt(index);
+
+    print("Options after removal:");
+    for (var opt in options) {
+      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
+    }
     refresh();
   }
 
