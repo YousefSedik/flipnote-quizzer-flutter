@@ -1,9 +1,7 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:project/modules/edit_quiz/edit_quiz_controller.dart';
 import 'package:project/widgets/black_button.dart';
 import 'package:project/widgets/input_text_field.dart';
-import 'package:project/utils.dart';
 import 'package:get/get.dart';
 
 class ManageQuestionsEdit extends StatelessWidget {
@@ -237,11 +235,6 @@ class ManageQuestionsEdit extends StatelessWidget {
                   title: 'Question',
                   lastItem: false,
                   isObscureText: false,
-                  other: {
-                    "onChanged": (v) {
-                      // controller.quiz = questionTypes.MCQ;
-                    },
-                  },
                 ),
                 GetBuilder(
                   builder: (EditQuizController controller) {
@@ -268,7 +261,6 @@ class ManageQuestionsEdit extends StatelessWidget {
                                 ),
                                 onChanged: (val) {
                                   controller.updateOption(index, val);
-                                  controller.options[index].controller.text = val;
                                 },
                               ),
                               trailing: IconButton(

@@ -1,11 +1,7 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:project/api/api.dart';
 import 'package:project/modules/create_quiz/create_quiz_controller.dart';
-import 'package:project/modules/shared_controllers/shared_quiz_controller.dart';
 import 'package:project/widgets/black_button.dart';
 import 'package:project/widgets/input_text_field.dart';
-import 'package:project/utils.dart';
 import 'package:get/get.dart';
 
 class ManageQuestionsCreate extends StatelessWidget {
@@ -184,11 +180,6 @@ class ManageQuestionsCreate extends StatelessWidget {
                 title: 'Question',
                 lastItem: false,
                 isObscureText: false,
-                other: {
-                  "onChanged": (v) {
-                    // controller.quiz = questionTypes.Written;
-                  },
-                },
               ),
               InputTextField(
                 controller: controller.answerController,
@@ -196,11 +187,6 @@ class ManageQuestionsCreate extends StatelessWidget {
                 title: 'Answer',
                 lastItem: true,
                 isObscureText: false,
-                other: {
-                  "onChanged": (v) {
-                    // controller.quiz = questionTypes.Written;
-                  },
-                },
               ),
               BlackButton(
                 text: "Add",
@@ -259,13 +245,12 @@ class ManageQuestionsCreate extends StatelessWidget {
                                     controller.selectCorrectAnswer(index),
                               ),
                               title: TextField(
+                                controller: option.controller,
                                 decoration: InputDecoration(
                                   hintText: "Option ${index + 1}",
                                 ),
                                 onChanged: (val) {
                                   controller.updateOption(index, val);
-                                  controller.options[index].controller.text =
-                                      val;
                                 },
                               ),
                               trailing: IconButton(

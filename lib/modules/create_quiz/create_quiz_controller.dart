@@ -11,9 +11,9 @@ class QuizController extends SharedQuizController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Future<bool> addMCQQuestion() async {
-    print(options[0].text);
+    print(options[0].controller.text);
     for (var option in options) {
-      if (option.text.isEmpty) {
+      if (option.controller.text.isEmpty) {
         Get.snackbar(
           "Error",
           "Please fill all options or delete unused ones",
@@ -47,22 +47,21 @@ class QuizController extends SharedQuizController {
     print("Adding MCQ question");
     print("Question: ${questionController.text}");
     print("Answer: ${answerController.text}");
-    print("Options: ${options.map((e) => "${e.text} ${e.isCorrect}").toList()}");
+    print(
+      "Options: ${options.map((e) => "${e.controller.text} ${e.isCorrect}").toList()}",
+    );
     quiz.MCQQuestions.add(
       MultipleChoiceQuestion(
         question: questionController.text,
-        answer: answerController.text,
-        options: options.map((e) => e.text).toList(),
+        answer: options.firstWhere((option) => option.isCorrect).controller.text,
+        options: options.map((e) => e.controller.text).toList(),
       ),
     );
-    questionController.clear();
-    answerController.clear();
     options.clear();
     for (var q in quiz.MCQQuestions) {
       print("mcq q: ${q.question} ${q.answer} ${q.options}");
     }
 
-    refresh();
     return true;
   }
 
@@ -83,32 +82,12 @@ class QuizController extends SharedQuizController {
         answer: answerController.text,
       ),
     );
-    questionController.clear();
-    answerController.clear();
-
-    refresh();
+    clearAll();
     for (var q in quiz.writtenQuestions) {
       print("Written q: ${q.question} ${q.answer}");
     }
     return true;
   }
-
-  void addOption(String option) {
-    print("Adding option");
-    options.add(Option(text: option));
-    if (options.length == 1) {
-      selectCorrectAnswer(0);
-      return;
-    }
-    refresh(); // notify UI
-  }
-
-  void updateOption(int index, String text) {
-    print("Updating option $index to $text");
-    options[index].text = text;
-    refresh(); // notify UI
-  }
-
 
   Future<void> createQuiz() async {
     // first create the quiz, then add the questions

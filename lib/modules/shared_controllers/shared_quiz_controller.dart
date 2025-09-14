@@ -6,10 +6,11 @@ import 'package:project/models/quizModel.dart';
 import 'package:project/utils.dart';
 
 class Option {
-  String text;
   bool isCorrect;
   TextEditingController controller = TextEditingController();
-  Option({required this.text, this.isCorrect = false});
+  Option({required text, this.isCorrect = false}) {
+    controller.text = text;
+  }
 }
 
 class SharedQuizController extends GetxController {
@@ -19,6 +20,15 @@ class SharedQuizController extends GetxController {
   final TextEditingController answerController = TextEditingController();
   List<Option> options = [];
   QuizModel quiz = QuizModel();
+
+  void clearAll() {
+    titleController.clear();
+    descriptionController.clear();
+    questionController.clear();
+    answerController.clear();
+    options.clear();
+    refresh();
+  }
 
   Future<bool> addWrittenQuestion() async {
     if (questionController.text.isEmpty || answerController.text.isEmpty) {
@@ -37,9 +47,7 @@ class SharedQuizController extends GetxController {
         answer: answerController.text,
       ),
     );
-    questionController.clear();
-    answerController.clear();
-    refresh();
+    clearAll();
     for (var q in quiz.writtenQuestions) {
       print("Written q: ${q.question} ${q.answer}");
     }
@@ -57,7 +65,7 @@ class SharedQuizController extends GetxController {
 
   void updateOption(int index, String text) {
     print("Updating option $index to $text");
-    options[index].text = text;
+    options[index].controller.text = text;
     refresh();
   }
 
@@ -65,24 +73,26 @@ class SharedQuizController extends GetxController {
     for (int i = 0; i < options.length; i++) {
       options[i].isCorrect = (i == index);
       if (options[index].isCorrect) {
-        answerController.text = options[index].text;
+        answerController.text = options[index].controller.text;
       }
     }
     refresh();
   }
 
   void removeOption(int index) {
-    print("Removing option $index with value ${options[index].text}");
+    print(
+      "Removing option $index with value ${options[index].controller.text}",
+    );
     print("Options before removal:");
     for (var opt in options) {
-      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
+      print("Option: ${opt.controller.text}, isCorrect: ${opt.isCorrect}");
     }
 
     options.removeAt(index);
 
     print("Options after removal:");
     for (var opt in options) {
-      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
+      print("Option: ${opt.controller.text}, isCorrect: ${opt.isCorrect}");
     }
     refresh();
   }

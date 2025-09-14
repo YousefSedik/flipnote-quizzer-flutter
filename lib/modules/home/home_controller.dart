@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:project/modules/home/home_service.dart';
 import 'package:project/models/quizModel.dart';
 import 'package:get/get.dart';
+import 'package:project/widgets/confirmation_dialog.dart';
 
 class HomeController extends GetxController {
   HomeService homeService = Get.find<HomeService>();
@@ -17,9 +19,15 @@ class HomeController extends GetxController {
     update();
   }
 
-  void deleteQuiz(String id) {
-    homeService.deleteQuiz(id);
-    quizzes.removeWhere((quiz) => quiz.id == id);
-    update();
+  Future<void> deleteQuiz(String id) async{
+    await showConfirmationDialog("confirmation to delete the quiz").then((confirmed) {
+      if (confirmed) {
+        print("Deleting quiz with id: $id");
+        
+        homeService.deleteQuiz(id);
+        quizzes.removeWhere((quiz) => quiz.id == id);
+        update();
+      }
+    });
   }
 }

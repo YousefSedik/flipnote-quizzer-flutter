@@ -38,7 +38,7 @@ class EditQuizController extends SharedQuizController {
   Future<bool> addMCQQuestion() async {
     // ensure all options are filled
     for (var option in options) {
-      if (option.text.isEmpty) {
+      if (option.controller.text.isEmpty) {
         Get.snackbar(
           "Error",
           "Please fill all options or delete unused ones",
@@ -73,7 +73,7 @@ class EditQuizController extends SharedQuizController {
       MultipleChoiceQuestion(
         question: questionController.text,
         answer: answerController.text,
-        options: options.map((e) => e.text).toList(),
+        options: options.map((e) => e.controller.text).toList(),
       ),
     );
     questionController.clear();

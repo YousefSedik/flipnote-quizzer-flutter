@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:project/modules/home/home_controller.dart';
 
 class QuizCard extends StatelessWidget {
-  QuizCard({super.key,     
-  this.isVisible = true,
+  QuizCard({
+    super.key,
+    this.isVisible = true,
     required this.id,
     required this.title,
     required this.description,
@@ -12,7 +13,7 @@ class QuizCard extends StatelessWidget {
     required this.createdAt,
     required this.isPublic,
     required this.timeSince,
-});
+  });
   final String id;
   final String title;
   final String description;
@@ -22,10 +23,10 @@ class QuizCard extends StatelessWidget {
   final String? timeSince;
 
   bool isVisible = true;
-  void deleteCard(String id) {
-    controller.deleteQuiz(id);
+  void deleteCard(String id) async {
+    await controller.deleteQuiz(id);
   }
-  
+
   final HomeController controller = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,6 @@ class QuizCard extends StatelessWidget {
                   ),
                 ],
               ),
-
 
               const SizedBox(height: 4),
               Text(
