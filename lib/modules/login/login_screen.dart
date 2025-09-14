@@ -93,7 +93,7 @@ class LoginPage extends StatelessWidget {
               "validators": [emailValidator],
             },
             // TODO: remove this
-            defaultValue: "admin@admin.com",
+            // defaultValue: "admin@admin.com",
           ),
           InputTextField(
             controller: controller.passwordController,
@@ -104,7 +104,7 @@ class LoginPage extends StatelessWidget {
             other: {
               "validators": [notNullOrEmpty],
             },
-            defaultValue: "admin",
+            // defaultValue: "admin",
           ),
 
           // Login Button

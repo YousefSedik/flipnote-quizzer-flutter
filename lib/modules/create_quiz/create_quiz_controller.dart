@@ -1,44 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/models/question.dart';
-import 'package:project/models/quizModel.dart';
 import 'package:project/modules/create_quiz/create_quiz_services.dart';
-
-class Option {
-  String text;
-  bool isCorrect;
-  Option({required this.text, this.isCorrect = false});
-}
+import 'package:project/modules/shared_controllers/shared_quiz_controller.dart';
 
 // enum questionTypes { Written, MCQ }
 
-class QuizController extends GetxController {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController questionController = TextEditingController();
-  final TextEditingController answerController = TextEditingController();
-  List<Option> options = [];
+class QuizController extends SharedQuizController {
   final CreateQuizServices create_services = Get.find<CreateQuizServices>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  QuizModel quiz = QuizModel();
 
-  Future<void> addMCQQuestion() async {
+  Future<bool> addMCQQuestion() async {
+    print(options[0].text);
+    for (var option in options) {
+      if (option.text.isEmpty) {
+        Get.snackbar(
+          "Error",
+          "Please fill all options or delete unused ones",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+    }
     if (options.length < 2) {
       Get.snackbar(
         "Error",
         "Please add at least 2 options",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
       );
-      return;
+      return false;
     }
     if (!options.any((option) => option.isCorrect)) {
       Get.snackbar(
         "Error",
         "Please select a correct answer",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
       );
-      return;
+      return false;
     }
+    print("Adding MCQ question");
+    print("Question: ${questionController.text}");
+    print("Answer: ${answerController.text}");
+    print("Options: ${options.map((e) => "${e.text} ${e.isCorrect}").toList()}");
     quiz.MCQQuestions.add(
       MultipleChoiceQuestion(
         question: questionController.text,
@@ -53,12 +62,21 @@ class QuizController extends GetxController {
       print("mcq q: ${q.question} ${q.answer} ${q.options}");
     }
 
-    Get.back();
-    Get.back();
     refresh();
+    return true;
   }
 
-  Future<void> addWrittenQuestion() async {
+  Future<bool> addWrittenQuestion() async {
+    if (questionController.text.isEmpty || answerController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please fill both question and answer",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+      return false;
+    }
     quiz.writtenQuestions.add(
       WrittenQuestion(
         question: questionController.text,
@@ -67,18 +85,21 @@ class QuizController extends GetxController {
     );
     questionController.clear();
     answerController.clear();
-    Get.back();
-    Get.back();
+
     refresh();
     for (var q in quiz.writtenQuestions) {
       print("Written q: ${q.question} ${q.answer}");
     }
+    return true;
   }
 
-  void addOption() {
+  void addOption(String option) {
     print("Adding option");
-    options.add(Option(text: ""));
-    selectCorrectAnswer(0);
+    options.add(Option(text: option));
+    if (options.length == 1) {
+      selectCorrectAnswer(0);
+      return;
+    }
     refresh(); // notify UI
   }
 

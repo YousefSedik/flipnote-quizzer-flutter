@@ -1,78 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:project/api/api.dart';
 import 'package:get/get.dart';
 import 'package:project/modules/home/home_controller.dart';
 
-class QuizCard extends StatefulWidget {
-  QuizCard({
-    super.key,
-    this.isVisible = true,
+class QuizCard extends StatelessWidget {
+  QuizCard({super.key,     
+  this.isVisible = true,
     required this.id,
     required this.title,
     required this.description,
     required this.author,
-    required this.questionCount,
     required this.createdAt,
     required this.isPublic,
     required this.timeSince,
-  });
+});
   final String id;
   final String title;
   final String description;
   final String author;
-  final int questionCount;
   final String createdAt;
   final bool isPublic;
   final String? timeSince;
 
   bool isVisible = true;
-
-  @override
-  State<QuizCard> createState() => _QuizCardState();
-}
-
-class _QuizCardState extends State<QuizCard> {
-  final ApiClient apiClient = ApiClient();
-
   void deleteCard(String id) {
-    apiClient.deleteQuiz(id).then((response) {
-      if (response.statusCode == 204) {
-        print("Quiz deleted successfully");
-        setState(() {
-          widget.isVisible = false;
-        });
-      } else {
-        print("Failed to delete quiz");
-      }
-    });
-
+    controller.deleteQuiz(id);
   }
-
-  Future<List> fetchQuestions(String id) async {
-    List questions = [];
-    final response = await apiClient.getQuestions(id);
-
-    if (response.statusCode == 200) {
-      final data = response.data as Map;
-      for (var question in data["mcq_questions"]) {
-        question['type'] = 'mcq';
-        questions.add(question);
-      }
-      for (var question in data["written_questions"]) {
-        question['type'] = 'written';
-        questions.add(question);
-      }
-    } else {
-      print("Failed to load questions");
-    }
-    return questions;
-  }
-
+  
   final HomeController controller = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: widget.isVisible,
+      visible: isVisible,
       child: Card(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -86,7 +44,7 @@ class _QuizCardState extends State<QuizCard> {
                 children: [
                   Expanded(
                     child: Text(
-                      widget.title,
+                      title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -98,28 +56,23 @@ class _QuizCardState extends State<QuizCard> {
               ),
 
               const SizedBox(height: 6),
-              Text(widget.description, style: TextStyle(color: Colors.black54)),
+              Text(description, style: TextStyle(color: Colors.black54)),
 
               const SizedBox(height: 10),
               Row(
                 children: [
                   Icon(Icons.person_outline, size: 16, color: Colors.black54),
                   Text(
-                    "Created by ${widget.author}",
+                    "Created by ${author}",
                     style: TextStyle(fontSize: 13, color: Colors.black87),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 4),
-              Text(
-                "${widget.questionCount} questions",
-                style: TextStyle(fontSize: 13, color: Colors.black87),
-              ),
 
               const SizedBox(height: 4),
               Text(
-                "Created ${widget.timeSince}",
+                "Created ${timeSince}",
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
 
@@ -130,7 +83,7 @@ class _QuizCardState extends State<QuizCard> {
                   IconButton(
                     icon: const Icon(Icons.delete_outline),
                     onPressed: () {
-                      deleteCard(widget.id);
+                      deleteCard(id);
                     },
                   ),
                   IconButton(
@@ -139,10 +92,10 @@ class _QuizCardState extends State<QuizCard> {
                       await Get.toNamed(
                         "/quiz/edit",
                         arguments: {
-                          'id': widget.id,
-                          'title': widget.title,
-                          'description': widget.description,
-                          'isPublic': widget.isPublic,
+                          'id': id,
+                          'title': title,
+                          'description': description,
+                          'isPublic': isPublic,
                         },
                       );
                     },
@@ -155,18 +108,12 @@ class _QuizCardState extends State<QuizCard> {
                     child: IconButton(
                       icon: const Icon(Icons.play_arrow, color: Colors.white),
                       onPressed: () async {
-                        List questions = await fetchQuestions(widget.id);
                         Get.toNamed(
                           "/quiz/play",
                           arguments: {
-                            'id': widget.id,
-                            'title': widget.title,
-                            'description': widget.description,
-                            'author': widget.author,
-                            'questionCount': widget.questionCount,
-                            'createdAt': widget.createdAt,
-                            'isPublic': widget.isPublic,
-                            'questions': questions,
+                            'id': id,
+                            'title': title,
+                            'description': description,
                           },
                         );
                         controller.fetchQuizzes();
@@ -186,13 +133,13 @@ class _QuizCardState extends State<QuizCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: widget.isPublic ? Colors.green.shade100 : Colors.red.shade100,
+        color: isPublic ? Colors.green.shade100 : Colors.red.shade100,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
-        widget.isPublic ? "Public" : "Private",
+        isPublic ? "Public" : "Private",
         style: TextStyle(
-          color: widget.isPublic ? Colors.green : Colors.red,
+          color: isPublic ? Colors.green : Colors.red,
           fontSize: 12,
           fontWeight: FontWeight.bold,
         ),

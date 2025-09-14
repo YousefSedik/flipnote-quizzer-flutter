@@ -32,14 +32,14 @@ class EditQuizServices extends GetxService {
   }
 
   Future<void> updateQuestion(Map<String, dynamic> data, String Quizid) {
-    return apiClient.updateMCQQuestion(data, Quizid, data['id']);
+    return apiClient.updateMCQQuestion(data, Quizid, data['id'].toString());
   }
 
-  Future<void> deleteQuestion(String id, String type) async {
+  Future<void> deleteQuestion(String quizId, String id, String type) async {
     if (type == "written") {
-      apiClient.deleteQuestion(id, type);
+      apiClient.deleteQuestion(quizId, id, type);
     } else if (type == "mcq") {
-      apiClient.deleteQuestion(id, type);
+      apiClient.deleteQuestion(quizId, id, type);
     }
   }
 }

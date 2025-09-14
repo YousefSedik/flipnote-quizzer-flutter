@@ -11,6 +11,7 @@ class QuizModel {
   final int? questionCount;
   final String? createdAt;
   String? timeSince;
+  bool isVisible = true;
   final ApiClient apiClient = ApiClient();
 
   List<MultipleChoiceQuestion> MCQQuestions = [];
@@ -27,7 +28,6 @@ class QuizModel {
     this.viewsCount = 0,
     this.timeSince,
   });
-  Future<void> getData() async {}
   Future<void> fetchQuestions(String id) async {
     final response = await apiClient.getQuestions(id);
     if (response.statusCode == 200) {

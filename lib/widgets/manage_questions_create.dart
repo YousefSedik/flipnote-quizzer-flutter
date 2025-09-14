@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:project/api/api.dart';
 import 'package:project/modules/create_quiz/create_quiz_controller.dart';
+import 'package:project/modules/shared_controllers/shared_quiz_controller.dart';
 import 'package:project/widgets/black_button.dart';
 import 'package:project/widgets/input_text_field.dart';
 import 'package:project/utils.dart';
@@ -10,7 +12,6 @@ class ManageQuestionsCreate extends StatelessWidget {
   QuizController controller = Get.find<QuizController>();
   @override
   Widget build(BuildContext context) {
-    // print(controller.quiz.fetchQuestions())
     return Column(
       children: [
         SizedBox(height: 20),
@@ -19,7 +20,7 @@ class ManageQuestionsCreate extends StatelessWidget {
             // Add Question
             AddQuestion(context),
             // Upload PDF
-            uploadPDF(),
+            uploadPDF(context),
           ],
         ),
         SizedBox(height: 20),
@@ -40,12 +41,6 @@ class ManageQuestionsCreate extends StatelessWidget {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.edit_outlined),
-                        onPressed: () {
-                          // TODO: implement delete question
-                        },
-                      ),
                       IconButton(
                         icon: Icon(Icons.delete_outline_outlined),
                         onPressed: () {
@@ -73,10 +68,6 @@ class ManageQuestionsCreate extends StatelessWidget {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.edit_outlined),
-                        onPressed: () {},
-                      ),
                       IconButton(
                         icon: Icon(Icons.delete_outline_outlined),
                         onPressed: () {
@@ -148,7 +139,6 @@ class ManageQuestionsCreate extends StatelessWidget {
               BlackButton(
                 text: "Multiple Choice Question",
                 onPressed: () {
-                  // Get.back();
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
@@ -159,7 +149,6 @@ class ManageQuestionsCreate extends StatelessWidget {
               BlackButton(
                 text: "Written Question",
                 onPressed: () {
-                  // Get.back();
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
@@ -215,7 +204,12 @@ class ManageQuestionsCreate extends StatelessWidget {
               ),
               BlackButton(
                 text: "Add",
-                onPressed: controller.addWrittenQuestion,
+                onPressed: () async {
+                  if (await controller.addWrittenQuestion()) {
+                    Get.back();
+                    Get.back();
+                  }
+                },
               ),
               const SizedBox(height: 12),
             ],
@@ -245,11 +239,6 @@ class ManageQuestionsCreate extends StatelessWidget {
                   title: 'Question',
                   lastItem: false,
                   isObscureText: false,
-                  other: {
-                    "onChanged": (v) {
-                      // controller.quiz = questionTypes.MCQ;
-                    },
-                  },
                 ),
                 GetBuilder(
                   builder: (QuizController controller) {
@@ -277,7 +266,7 @@ class ManageQuestionsCreate extends StatelessWidget {
                                     controller.updateOption(index, val),
                               ),
                               trailing: IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
+                                icon: Icon(Icons.delete),
                                 onPressed: () => controller.removeOption(index),
                               ),
                             );
@@ -296,7 +285,9 @@ class ManageQuestionsCreate extends StatelessWidget {
                               vertical: 10,
                             ),
                           ),
-                          onPressed: controller.addOption,
+                          onPressed: () {
+                            controller.addOption("");
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [Icon(Icons.add), Text("Add Option")],
@@ -306,7 +297,15 @@ class ManageQuestionsCreate extends StatelessWidget {
                     );
                   },
                 ),
-                BlackButton(text: "Add", onPressed: controller.addMCQQuestion),
+                BlackButton(
+                  text: "Add",
+                  onPressed: () async {
+                    if (await controller.addMCQQuestion()) {
+                      Get.back();
+                      Get.back();
+                    }
+                  },
+                ),
                 const SizedBox(height: 12),
               ],
             ),
@@ -316,7 +315,7 @@ class ManageQuestionsCreate extends StatelessWidget {
     );
   }
 
-  Widget uploadPDF() {
+  Widget uploadPDF(BuildContext context) {
     return SizedBox(
       child: TextButton(
         style: TextButton.styleFrom(
@@ -330,14 +329,69 @@ class ManageQuestionsCreate extends StatelessWidget {
         ),
 
         onPressed: () async {
-          FilePickerResult? result = await FilePicker.platform.pickFiles(
-            type: FileType.custom,
-            allowedExtensions: ['pdf'],
-          );
-          if (result != null) {
-            String content = await pickAndReadPdf(result.paths[0]!);
-          } else {}
-          print("Upload PDF Button Pressed");
+          String content = await controller.getQuestionsFromPDF();
+          // print("PDF Content: $content");
+
+          // ApiClient apiClient = ApiClient();
+          // apiClient.extractQuestions(content).then((response) {
+          //   if (response.statusCode == 200) {
+          //     print(response.data['mcqs'][0]);
+          //   }
+          // });
+          var data = {
+            "mcq": [
+              {
+                "text": "We should keep our savings with banks because",
+                "options": [
+                  "It is safe",
+                  "Earns interest",
+                  "Can be withdrawn anytime",
+                  "All of above",
+                ],
+                "answer": "All of above",
+              },
+              {
+                "text": "Bank does not give loan against",
+                "options": [
+                  "Gold Ornaments",
+                  "LIC policy",
+                  "Lottery ticket",
+                  "NSC",
+                ],
+                "answer": "Lottery ticket",
+              },
+            ],
+            "written": [],
+          };
+          for (var question in data['mcq'] as List) {
+            controller.options = [];
+            for (var option in question['options'] as List) {
+              print("Option: $option ${controller.options}");
+              controller.addOption(option);
+              // controller.options.add(
+              //   Option(text: option, isCorrect: option == question['answer']),
+              // );
+            }
+            controller.questionController.text = question['text'];
+            await showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: MCQModalBottomSheetBuilder,
+            );
+          }
+          for (var q in controller.quiz.MCQQuestions) {
+            print("mcq q: ${q.question} ${q.answer} ${q.options}");
+          }
+          // adding written question
+          for (var question in data['written'] as List) {
+            controller.questionController.text = question['text'];
+            controller.answerController.text = question['answer'];
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: writtenQuestionModalBottomSheetBuilder,
+            );
+          }
         },
 
         child: Row(

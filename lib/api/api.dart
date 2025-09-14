@@ -12,59 +12,26 @@ class ApiClient {
   final storage = const FlutterSecureStorage();
 
   ApiClient() {
+
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          print("from onRequest API Client initialized with base URL: $baseUrl");
-          final accessToken = await storage.read(key: "access_token");
-          final refreshToken = await storage.read(key: "refresh_token");
-          print("Access token: $accessToken");
-          print("Refresh token: $refreshToken");
-          if (accessToken != null) {
-            options.headers["Authorization"] = "Bearer $accessToken";
+          final token = await storage.read(key: "token");
+          print("Token: $token");
+          if (token != null) {
+            options.headers["Authorization"] = "Token $token";
           }
           return handler.next(options);
-        },
-        onError: (DioException e, handler) async {
-          print("API Client initialized with base URL: $baseUrl");
-          final accessToken = await storage.read(key: "access_token");
-          final refreshToken = await storage.read(key: "refresh_token");
-          print("Access token: $accessToken");
-          print("Refresh token: $refreshToken");
-          print(e.response?.statusCode);
-          if (e.response?.statusCode == 401) {
-            // try refresh
-            final refreshToken = await storage.read(key: "refresh_token");
-            if (refreshToken != null) {
-              try {
-                final response = await _dio.post(
-                  "/auth/token/refresh/",
-                  data: {"refresh": refreshToken},
-                );
-                final newAccess = response.data["access"];
-                await storage.write(key: "access_token", value: newAccess);
-
-                // retry original request with new token
-                e.requestOptions.headers["Authorization"] = "Bearer $newAccess";
-                final retryResponse = await _dio.fetch(e.requestOptions);
-                return handler.resolve(retryResponse);
-              } catch (refreshError) {
-                // refresh failed → clear tokens & force logout
-                await storage.deleteAll();
-              }
-            }
-          }
-          return handler.next(e);
         },
       ),
     );
   }
-  //  
+  //
   Future<Response> getProfile() {
     return _dio
         .get("/auth/profile/")
         .then((response) {
-          if (response.statusCode != 200){
+          if (response.statusCode != 200) {
             throw Error();
           }
           print("Profile fetched successfully.");
@@ -78,37 +45,16 @@ class ApiClient {
 
   Future<Response> login(String email, String password) async {
     Response response = await _dio.post(
-      "/auth/login/",
-      data: {"email": email, "password": password},
+      "auth/api-token-auth/",
+      data: {"username": email, "password": password},
     );
+    print("Login response: ${response.data}");
+    print("Status code: ${response.statusCode}");
     if (response.statusCode != 200) {
       return response;
     }
-    print("Login successful, storing tokens.");
-    await storage.write(key: "access_token", value: response.data["access"]);
-    await storage.write(key: "refresh_token", value: response.data["refresh"]);
+    await storage.write(key: "token", value: response.data["token"]);
     return response;
-  }
-
-  Future<bool> isAuthenticated() async {
-    final accessToken = await storage.read(key: "access_token");
-    if (accessToken != null) {
-      _dio
-          .post("/auth/token/verify/", data: {"token": accessToken})
-          .then((response) {
-            if (response.statusCode == 200) {
-              print("Token is valid.");
-              return true;
-            }
-          })
-          .catchError((error) {
-            print("Token is invalid or expired: $error");
-            // try to refresh it
-
-          });
-    }
-    print("No access token found.");
-    return false;
   }
 
   Future<Response> signup(
@@ -159,8 +105,8 @@ class ApiClient {
     return _dio.delete("quizzes/$id");
   }
 
-  Future<Response> deleteQuestion(String id, String type) {
-    return _dio.delete("questions/$id/$type");
+  Future<Response> deleteQuestion(String quizId, String id, String type) {
+    return _dio.delete("quizzes/$quizId/questions/$id/$type");
   }
 
   Future<Response> getQuestions(String id) {

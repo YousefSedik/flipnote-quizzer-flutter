@@ -90,7 +90,6 @@ class InputTextField extends StatelessWidget {
             }
             return null;
           },
-          // ...other,
         ),
         SizedBox(height: sizedBoxSize),
       ],

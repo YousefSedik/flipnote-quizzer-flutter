@@ -18,7 +18,7 @@ class SignupService extends GetxService {
       passwordConfirmation,
     );
     if (response.statusCode == 201) {
-      await apiClient.login(username, password);
+      await apiClient.login(email, password);
       return true;
     } else if (response.statusCode == 400) {
       final Map<String, dynamic> data = response.data;

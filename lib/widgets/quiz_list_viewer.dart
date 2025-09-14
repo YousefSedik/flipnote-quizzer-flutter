@@ -1,41 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:project/modules/view_quiz/view_quiz_controller.dart';
+import 'package:get/get.dart';
 
-class QuizListViewer extends StatefulWidget {
-  final List questions;
-  String id;
-  QuizListViewer({super.key, required this.questions, required this.id});
-
-  State<QuizListViewer> createState() => _QuizCardsGridViewerState();
-}
-
-class _QuizCardsGridViewerState extends State<QuizListViewer> {
-  @override
-  void initState() {
-    super.initState();
-    widget.questions.shuffle();
-  }
+class QuizListViewer extends StatelessWidget {
+  final ViewQuizController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: widget.questions.length,
-        itemBuilder: (context, index) {
-          if (widget.questions[index]['type'] == 'mcq') {
-            return buildQuizCardMCQ(
-              widget.questions[index]['text']!,
-              widget.questions[index]['choices']!,
-              widget.questions[index]['correct_answer']!,
-            );
-          } else {
-            return buildQuizCardWritten(
-              widget.questions[index]['text']!,
-              widget.questions[index]['answer']!,
-            );
-          }
-        },
-      ),
+      child: Obx(() {
+        return ListView.builder(
+          itemCount: controller.questions.length,
+          itemBuilder: (context, index) {
+            final question = controller.questions[index];
+            if (question['type'] == 'mcq') {
+              return buildQuizCardMCQ(
+                question['text']!,
+                question['choices']!,
+                question['correct_answer']!,
+              );
+            } else {
+              return buildQuizCardWritten(
+                question['text']!,
+                question['answer']!,
+              );
+            }
+          },
+        );
+      }),
     );
   }
 

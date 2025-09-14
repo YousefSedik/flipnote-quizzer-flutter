@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project/api/api.dart';
 import 'package:project/modules/home/home_controller.dart';
-import 'package:project/widgets/black_button.dart';
 import 'package:project/widgets/quiz_card.dart';
-import 'package:project/models/quizModel.dart';
 import 'package:get/get.dart';
 
 class MyQuizzesWidget extends StatelessWidget {
@@ -42,8 +39,6 @@ class MyQuizzesWidget extends StatelessWidget {
                     title: quiz.title!,
                     description: quiz.description!,
                     author: quiz.author ?? "Unknown",
-                    questionCount:
-                        quiz.MCQQuestions.length + quiz.writtenQuestions.length,
                     createdAt: quiz.createdAt!,
                     isPublic: quiz.isPublic,
                     timeSince: quiz.timeSince,

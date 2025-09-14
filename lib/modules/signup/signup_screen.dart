@@ -88,7 +88,7 @@ class SignUpPage extends StatelessWidget {
             title: "Email",
             lastItem: false,
             isObscureText: false,
-            defaultValue: "user121@gmail.com",
+            defaultValue: "user@gmail.com",
             other: {
               "validators": [emailValidator],
             },
@@ -98,7 +98,7 @@ class SignUpPage extends StatelessWidget {
             hintText: "Username",
             title: "Username",
             lastItem: false,
-            defaultValue: "yousefsedikkk",
+            // defaultValue: "yousefsedikkk",
             isObscureText: false,
           ),
           InputTextField(
@@ -106,7 +106,7 @@ class SignUpPage extends StatelessWidget {
             hintText: "Enter your password",
             title: "Password",
             lastItem: false,
-            defaultValue: "ggpass1242123",
+            // defaultValue: "ggpass1242123",
             isObscureText: true,
           ),
           InputTextField(
@@ -114,7 +114,7 @@ class SignUpPage extends StatelessWidget {
             hintText: "Enter your password again",
             title: "Confirm Password",
             lastItem: true,
-            defaultValue: "ggpass1242123",
+            // defaultValue: "ggpass1242123",
             isObscureText: true,
           ),
           // Login Button

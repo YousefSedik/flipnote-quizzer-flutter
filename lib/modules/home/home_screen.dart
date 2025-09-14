@@ -20,8 +20,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {
-              await storage.delete(key: "access_token");
-              await storage.delete(key: "refresh_token");
+              await storage.delete(key: "token");
               Get.offAllNamed('/login');
             },
           ),

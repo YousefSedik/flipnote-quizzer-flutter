@@ -1,27 +1,14 @@
-import 'package:project/api/api.dart';
-import 'package:project/modules/create_quiz/create_quiz_services.dart';
 import 'package:project/modules/edit_quiz/edit_quiz_service.dart';
-import 'package:project/models/quizModel.dart';
 import 'package:project/models/question.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project/modules/shared_controllers/shared_quiz_controller.dart';
 
-class Option {
-  String text;
-  bool isCorrect;
-  Option({required this.text, this.isCorrect = false});
-}
-
-class EditQuizController extends GetxController {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController questionController = TextEditingController();
-  final TextEditingController answerController = TextEditingController();
-  List<Option> options = [];
+class EditQuizController extends SharedQuizController {
   final EditQuizServices edit_services = Get.find<EditQuizServices>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  QuizModel quiz = QuizModel();
   List<Map<String, dynamic>> toDelete = [];
+
   @override
   void onInit() async {
     print("Create Quiz Controller initialized");
@@ -48,22 +35,39 @@ class EditQuizController extends GetxController {
     super.onInit();
   }
 
-  Future<void> addMCQQuestion() async {
+  Future<bool> addMCQQuestion() async {
+    // ensure all options are filled
+    for (var option in options) {
+      if (option.text.isEmpty) {
+        Get.snackbar(
+          "Error",
+          "Please fill all options or delete unused ones",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+        return false;
+      }
+    }
     if (options.length < 2) {
       Get.snackbar(
         "Error",
         "Please add at least 2 options",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
       );
-      return;
+      return false;
     }
     if (!options.any((option) => option.isCorrect)) {
       Get.snackbar(
         "Error",
-        "Please select a correct answer",
+        "Please select the correct answer",
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
       );
-      return;
+      return false;
     }
     quiz.MCQQuestions.add(
       MultipleChoiceQuestion(
@@ -79,12 +83,21 @@ class EditQuizController extends GetxController {
       print("mcq q: ${q.question} ${q.answer} ${q.options}");
     }
 
-    Get.back();
-    Get.back();
     refresh();
+    return true;
   }
 
-  Future<void> addWrittenQuestion() async {
+  Future<bool> addWrittenQuestion() async {
+    if (questionController.text.isEmpty || answerController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please fill both question and answer",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+      return false;
+    }
     quiz.writtenQuestions.add(
       WrittenQuestion(
         question: questionController.text,
@@ -93,17 +106,18 @@ class EditQuizController extends GetxController {
     );
     questionController.clear();
     answerController.clear();
-    Get.back();
-    Get.back();
+
     refresh();
     for (var q in quiz.writtenQuestions) {
       print("Written q: ${q.question} ${q.answer}");
     }
+
+    return true;
   }
 
-  void addOption() {
+  void addOption(String option) {
     print("Adding option");
-    options.add(Option(text: ""));
+    options.add(Option(text: option));
     selectCorrectAnswer(0);
     refresh(); // notify UI
   }
@@ -124,8 +138,17 @@ class EditQuizController extends GetxController {
   }
 
   void removeOption(int index) {
-    print("Removing option $index");
+    print("Removing option $index with value ${options[index].text}");
+    print("Options before removal:");
+    for (var opt in options) {
+      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
+    }
+
     options.removeAt(index);
+    print("Options after removal:");
+    for (var opt in options) {
+      print("Option: ${opt.text}, isCorrect: ${opt.isCorrect}");
+    }
     refresh();
   }
 
@@ -181,7 +204,7 @@ class EditQuizController extends GetxController {
     }
 
     for (var q in toDelete) {
-      edit_services.deleteQuestion(q['id'], q['type']);
+      edit_services.deleteQuestion(quiz.id!, q['id'].toString(), q['type']);
     }
   }
 }
