@@ -7,11 +7,15 @@ import 'package:project/modules/shared_controllers/shared_quiz_controller.dart';
 // enum questionTypes { Written, MCQ }
 
 class QuizController extends SharedQuizController {
-  final CreateQuizServices create_services = Get.find<CreateQuizServices>();
+  final CreateQuizServices createServices = Get.find<CreateQuizServices>();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Future<bool> addMCQQuestion() async {
-    print(options[0].controller.text);
+  Future<void> addMCQQuestion() async {
+    for (var option in options) {
+      if (option.isCorrect) {
+        answerController.text = option.controller.text;
+      }
+    }
     for (var option in options) {
       if (option.controller.text.isEmpty) {
         Get.snackbar(
@@ -21,7 +25,7 @@ class QuizController extends SharedQuizController {
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
         );
-        return false;
+        return;
       }
     }
     if (options.length < 2) {
@@ -32,7 +36,7 @@ class QuizController extends SharedQuizController {
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
-      return false;
+      return ;
     }
     if (!options.any((option) => option.isCorrect)) {
       Get.snackbar(
@@ -42,7 +46,7 @@ class QuizController extends SharedQuizController {
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
-      return false;
+      return;
     }
     print("Adding MCQ question");
     print("Question: ${questionController.text}");
@@ -50,19 +54,28 @@ class QuizController extends SharedQuizController {
     print(
       "Options: ${options.map((e) => "${e.controller.text} ${e.isCorrect}").toList()}",
     );
+    print(quiz.MCQQuestions.length);
     quiz.MCQQuestions.add(
       MultipleChoiceQuestion(
         question: questionController.text,
-        answer: options.firstWhere((option) => option.isCorrect).controller.text,
+        answer: options
+            .firstWhere((option) => option.isCorrect)
+            .controller
+            .text,
         options: options.map((e) => e.controller.text).toList(),
       ),
     );
+    print(quiz.MCQQuestions.length);
+    questionController.clear();
+    answerController.clear();
     options.clear();
     for (var q in quiz.MCQQuestions) {
       print("mcq q: ${q.question} ${q.answer} ${q.options}");
     }
+    Get.back();
+    Get.back();
+    refresh();
 
-    return true;
   }
 
   Future<bool> addWrittenQuestion() async {
@@ -92,7 +105,7 @@ class QuizController extends SharedQuizController {
   Future<void> createQuiz() async {
     // first create the quiz, then add the questions
     print(quiz.toMap());
-    var resp = await create_services.createQuiz(quiz.toMap());
+    var resp = await createServices.createQuiz(quiz.toMap());
     if (resp == null) {
       print("Failed to create quiz");
       return;
@@ -100,7 +113,7 @@ class QuizController extends SharedQuizController {
     String quizId = resp['id'].toString();
     print("Quiz created with id ${quizId}");
 
-    create_services.addQuestions(quizId);
+    createServices.addQuestions(quizId);
   }
 
   void removeMCQQuestion(int index) {

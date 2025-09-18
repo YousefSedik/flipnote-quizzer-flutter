@@ -6,13 +6,12 @@ class SplashController extends GetxController {
 
   @override
   void onInit() async {
-    bool s = await services.isUserLoggedIn();
-    print(s);
-    if (s == true) {
-      Get.offAllNamed('/home');
-    } else {
-      Get.offAllNamed('/login');
-    }
+    // bool s = await services.isUserLoggedIn();
+    // if (s == true) {
+    //   Get.offAllNamed('/home');
+    // } else {
+    //   Get.offAllNamed('/login');
+    // }
     super.onInit();
   }
 }

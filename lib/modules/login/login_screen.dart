@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project/api/api.dart';
 import 'package:project/modules/login/login_controller.dart';
 import 'package:project/widgets/input_text_field.dart';
 import 'package:project/validators/validators.dart';
@@ -91,9 +90,10 @@ class LoginPage extends StatelessWidget {
             isObscureText: false,
             other: {
               "validators": [emailValidator],
+              "key": "emailField",
             },
             // TODO: remove this
-            // defaultValue: "admin@admin.com",
+            defaultValue: "user@gmail.commm",
           ),
           InputTextField(
             controller: controller.passwordController,
@@ -103,8 +103,9 @@ class LoginPage extends StatelessWidget {
             isObscureText: true,
             other: {
               "validators": [notNullOrEmpty],
+              "key": "passwordField",
             },
-            // defaultValue: "admin",
+            defaultValue: "fajoe2020",
           ),
 
           // Login Button
@@ -129,6 +130,7 @@ class LoginPage extends StatelessWidget {
                   controller.formKey.currentState!.save();
                   controller.setLoading(true);
                   controller.login();
+                  controller.setLoading(false);
                 }
               },
               child: GetBuilder(
@@ -155,29 +157,34 @@ class LoginPage extends StatelessWidget {
           // Register Link
           Center(
             child: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "Don't have an account? ",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontFamily: 'SF Pro Text',
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Get.offAllNamed('/signup');
-                  },
+                Expanded(
                   child: Text(
-                    "Sign up",
+                    "Don't have an account? ",
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                      color: Colors.grey[600],
                       fontFamily: 'SF Pro Text',
-                      decoration: TextDecoration.underline,
-                      decorationColor: Colors.black,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.offAllNamed('/signup');
+                    },
+                    child: Text(
+                      "Sign up",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        fontFamily: 'SF Pro Text',
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.black,
+                      ),
                     ),
                   ),
                 ),

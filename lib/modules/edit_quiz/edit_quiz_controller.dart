@@ -38,6 +38,11 @@ class EditQuizController extends SharedQuizController {
   Future<bool> addMCQQuestion() async {
     // ensure all options are filled
     for (var option in options) {
+      if (option.isCorrect){
+        answerController.text = option.controller.text;
+      }
+    }
+    for (var option in options) {
       if (option.controller.text.isEmpty) {
         Get.snackbar(
           "Error",
@@ -71,8 +76,8 @@ class EditQuizController extends SharedQuizController {
     }
     quiz.MCQQuestions.add(
       MultipleChoiceQuestion(
-        question: questionController.text,
-        answer: answerController.text,
+        question: questionController.value.text,
+        answer: answerController.value.text,
         options: options.map((e) => e.controller.text).toList(),
       ),
     );

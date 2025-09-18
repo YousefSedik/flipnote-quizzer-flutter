@@ -47,6 +47,7 @@ class EditQuizPage extends StatelessWidget {
                       "onSaved": (v) {
                         controller.quiz.title = v;
                       },
+                      "key": "titleField",
                     },
                   ),
                   // Quiz Description
@@ -60,6 +61,7 @@ class EditQuizPage extends StatelessWidget {
                       "onSaved": (v) {
                         controller.quiz.description = v;
                       },
+                      "key": "descriptionField",
                     },
                   ),
                   Row(

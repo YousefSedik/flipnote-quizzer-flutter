@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:project/api/api.dart';
 import 'package:project/modules/signup/signup_controller.dart';
 import 'package:project/widgets/input_text_field.dart';
 import 'package:project/validators/validators.dart';
+import 'package:toggle_switch/toggle_switch.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -65,7 +65,7 @@ class SignUpPage extends StatelessWidget {
                   ),
 
                   SizedBox(height: 40),
-                  buildLoginForm(context),
+                  buildSignUpForm(context),
                 ],
               ),
             ),
@@ -75,13 +75,30 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
-  Widget buildLoginForm(BuildContext context) {
+  Widget buildSignUpForm(BuildContext context) {
     return Form(
       key: controller.formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          ToggleSwitch(
+            initialLabelIndex: 0,
+            minWidth: 120,
+            activeBgColor: [Colors.black],
+            inactiveBgColor: Colors.grey[200],
+            totalSwitches: 2,
+            labels: ['Student', 'Teacher'],
+
+            onToggle: (index) {
+              if (index == 0) {
+                controller.accountType = AccountType.student;
+              } else if (index == 1) {
+                controller.accountType = AccountType.teacher;
+              }
+            },
+          ),
+          SizedBox(height: 24),
           InputTextField(
             controller: controller.emailController,
             hintText: "Enter your email",
@@ -91,6 +108,7 @@ class SignUpPage extends StatelessWidget {
             defaultValue: "user@gmail.com",
             other: {
               "validators": [emailValidator],
+              "key": "emailField",
             },
           ),
           InputTextField(
@@ -100,6 +118,10 @@ class SignUpPage extends StatelessWidget {
             lastItem: false,
             // defaultValue: "yousefsedikkk",
             isObscureText: false,
+            other: {
+              "validators": [notNullOrEmpty],
+              "key": "usernameField",
+            },
           ),
           InputTextField(
             controller: controller.passwordController,
@@ -108,6 +130,10 @@ class SignUpPage extends StatelessWidget {
             lastItem: false,
             // defaultValue: "ggpass1242123",
             isObscureText: true,
+            other: {
+              "validators": [notNullOrEmpty],
+              "key": "passwordField",
+            },
           ),
           InputTextField(
             controller: controller.passwordConfirmationController,
@@ -116,6 +142,10 @@ class SignUpPage extends StatelessWidget {
             lastItem: true,
             // defaultValue: "ggpass1242123",
             isObscureText: true,
+            other: {
+              "validators": [notNullOrEmpty],
+              "key": "passwordConfirmationField",
+            },
           ),
           // Login Button
           SizedBox(
@@ -142,22 +172,23 @@ class SignUpPage extends StatelessWidget {
                   controller.setLoading(false);
                 }
               },
-              child: GetBuilder(builder: (SignupController c) {
-                if (c.isLoading) {
-                  return SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  );
-                } else {
-                  return Text("Sign Up");
-                }
-              }
+              child: GetBuilder(
+                builder: (SignupController c) {
+                  if (c.isLoading) {
+                    return SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    );
+                  } else {
+                    return Text("Sign Up");
+                  }
+                },
+              ),
             ),
-          ),
           ),
 
           SizedBox(height: 24),

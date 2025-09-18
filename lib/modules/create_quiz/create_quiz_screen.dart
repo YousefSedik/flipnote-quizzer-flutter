@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 class CreateQuizPage extends StatelessWidget {
   CreateQuizPage({super.key});
 
-  QuizController controller = Get.find<QuizController>();
+  final QuizController controller = Get.find<QuizController>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +47,7 @@ class CreateQuizPage extends StatelessWidget {
                       "onSaved": (v) {
                         controller.quiz.title = v;
                       },
+                      "key": "titleField",
                     },
                   ),
                   // Quiz Description
@@ -60,6 +61,7 @@ class CreateQuizPage extends StatelessWidget {
                       "onSaved": (v) {
                         controller.quiz.description = v;
                       },
+                      "key": "descriptionField",
                     },
                   ),
                   Row(

@@ -47,6 +47,7 @@ class InputTextField extends StatelessWidget {
         ),
         SizedBox(height: 8),
         TextFormField(
+          key: Key(other?["key"]?? ""),
           controller: controller,
           style: TextStyle(
             fontSize: 16,

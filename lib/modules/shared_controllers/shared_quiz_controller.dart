@@ -73,27 +73,21 @@ class SharedQuizController extends GetxController {
     for (int i = 0; i < options.length; i++) {
       options[i].isCorrect = (i == index);
       if (options[index].isCorrect) {
-        answerController.text = options[index].controller.text;
+        answerController.text = options[index].controller.value.text;
       }
     }
     refresh();
   }
 
   void removeOption(int index) {
-    print(
-      "Removing option $index with value ${options[index].controller.text}",
-    );
-    print("Options before removal:");
     for (var opt in options) {
-      print("Option: ${opt.controller.text}, isCorrect: ${opt.isCorrect}");
+      if (opt.isCorrect) {
+        answerController.text = opt.controller.text;
+        break;
+      }
     }
 
     options.removeAt(index);
-
-    print("Options after removal:");
-    for (var opt in options) {
-      print("Option: ${opt.controller.text}, isCorrect: ${opt.isCorrect}");
-    }
     refresh();
   }
 
@@ -127,4 +121,5 @@ class SharedQuizController extends GetxController {
 
     return content;
   }
+  
 }

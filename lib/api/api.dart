@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,7 +13,6 @@ class ApiClient {
   final storage = const FlutterSecureStorage();
 
   ApiClient() {
-
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -30,11 +30,15 @@ class ApiClient {
   Future<Response> getProfile() {
     return _dio
         .get("/auth/profile/")
-        .then((response) {
+        .then((response) async {
           if (response.statusCode != 200) {
             throw Error();
           }
-          print("Profile fetched successfully.");
+          // save profile data to local storage or state management
+          await storage.write(
+            key: "profile",
+            value: json.encode(response.data),
+          );
           return response;
         })
         .catchError((error) {
@@ -62,6 +66,7 @@ class ApiClient {
     String email,
     String password1,
     String password2,
+    String accountType,
   ) {
     return _dio.post(
       "/auth/register/",
@@ -69,9 +74,8 @@ class ApiClient {
         "email": email,
         "password": password1,
         "password2": password2,
-        "first_name": "first_name",
-        "last_name": "last_name",
         "username": username,
+        "account_type": accountType,
       },
     );
   }
@@ -138,5 +142,13 @@ class ApiClient {
 
   Future<Response> updateQuiz(Map<String, dynamic> map) async {
     return _dio.put("quizzes/${map['id']}", data: map);
+  }
+
+  Future<Response> follow(int id) {
+    return _dio.post("auth/follow/$id/");
+  }
+
+  Future<Response> getUserInfo(int userId) {
+    return _dio.get("auth/profile/$userId/");
   }
 }

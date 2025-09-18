@@ -95,10 +95,10 @@ class ManageQuestionsEdit extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
+          Get.bottomSheet(
+            QuestionTypeModalBottomSheetBuilder(context),
+            backgroundColor: Colors.white,
             isScrollControlled: true,
-            builder: QuestionTypeModalBottomSheetBuilder,
           );
         },
         child: SizedBox(
@@ -135,20 +135,20 @@ class ManageQuestionsEdit extends StatelessWidget {
               BlackButton(
                 text: "Multiple Choice Question",
                 onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
+                  Get.bottomSheet(
+                    MCQModalBottomSheetBuilder(context),
+                    backgroundColor: Colors.white,
                     isScrollControlled: true,
-                    builder: MCQModalBottomSheetBuilder,
                   );
                 },
               ),
               BlackButton(
                 text: "Written Question",
                 onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
+                  Get.bottomSheet(
+                    writtenQuestionModalBottomSheetBuilder(context),
+                    backgroundColor: Colors.white,
                     isScrollControlled: true,
-                    builder: writtenQuestionModalBottomSheetBuilder,
                   );
                 },
               ),
@@ -184,6 +184,7 @@ class ManageQuestionsEdit extends StatelessWidget {
                   "onChanged": (v) {
                     // controller.quiz = questionTypes.Written;
                   },
+                  "key": "writtenQuestionField",
                 },
               ),
               InputTextField(
@@ -196,6 +197,7 @@ class ManageQuestionsEdit extends StatelessWidget {
                   "onChanged": (v) {
                     // controller.quiz = questionTypes.Written;
                   },
+                  "key": "writtenAnswerField",
                 },
               ),
               BlackButton(
@@ -235,6 +237,7 @@ class ManageQuestionsEdit extends StatelessWidget {
                   title: 'Question',
                   lastItem: false,
                   isObscureText: false,
+                  other: {"key": "mcqQuestionField"},
                 ),
                 GetBuilder(
                   builder: (EditQuizController controller) {
@@ -371,10 +374,10 @@ class ManageQuestionsEdit extends StatelessWidget {
               // );
             }
             controller.questionController.text = question['text'];
-            await showModalBottomSheet(
-              context: context,
+            await Get.bottomSheet(
+              MCQModalBottomSheetBuilder(context),
               isScrollControlled: true,
-              builder: MCQModalBottomSheetBuilder,
+              backgroundColor: Colors.white,
             );
           }
           for (var q in controller.quiz.MCQQuestions) {
@@ -384,10 +387,10 @@ class ManageQuestionsEdit extends StatelessWidget {
           for (var question in data['written'] as List) {
             controller.questionController.text = question['text'];
             controller.answerController.text = question['answer'];
-            showModalBottomSheet(
-              context: context,
+            Get.bottomSheet(
+              writtenQuestionModalBottomSheetBuilder(context),
               isScrollControlled: true,
-              builder: writtenQuestionModalBottomSheetBuilder,
+              backgroundColor: Colors.white,
             );
           }
         },

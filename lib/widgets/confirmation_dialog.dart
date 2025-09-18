@@ -7,18 +7,18 @@ Future<bool> showConfirmationDialog(String confirmationMessage) async {
     AlertDialog(
       title: Text('Confirmation'),
       content: Text(confirmationMessage),
-      actions: <Widget>[
+      actions: [
         TextButton(
           onPressed: () {
             Get.back(result: false);
           },
-          child: Text("Cancel"),
+          child: Text("Cancel", style: TextStyle(color: Colors.black)),
         ),
         TextButton(
           onPressed: () {
             Get.back(result: true);
           },
-          child: Text("Confirm"),
+          child: Text("Confirm", style: TextStyle(color: Colors.black)),
         ),
       ],
     ),

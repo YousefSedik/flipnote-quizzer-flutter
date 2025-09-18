@@ -180,6 +180,9 @@ class ManageQuestionsCreate extends StatelessWidget {
                 title: 'Question',
                 lastItem: false,
                 isObscureText: false,
+                other: {
+                  "key": "writtenQuestionField",
+                },
               ),
               InputTextField(
                 controller: controller.answerController,
@@ -187,6 +190,9 @@ class ManageQuestionsCreate extends StatelessWidget {
                 title: 'Answer',
                 lastItem: true,
                 isObscureText: false,
+                other: {
+                  "key": "writtenAnswerField",
+                },
               ),
               BlackButton(
                 text: "Add",
@@ -225,6 +231,9 @@ class ManageQuestionsCreate extends StatelessWidget {
                   title: 'Question',
                   lastItem: false,
                   isObscureText: false,
+                  other: {
+                    "key": "mcqQuestionField",
+                  },
                 ),
                 GetBuilder(
                   builder: (QuizController controller) {
@@ -288,10 +297,8 @@ class ManageQuestionsCreate extends StatelessWidget {
                 BlackButton(
                   text: "Add",
                   onPressed: () async {
-                    if (await controller.addMCQQuestion()) {
-                      Get.back();
-                      Get.back();
-                    }
+                    controller.addMCQQuestion();
+                    
                   },
                 ),
                 const SizedBox(height: 12),
@@ -318,8 +325,6 @@ class ManageQuestionsCreate extends StatelessWidget {
 
         onPressed: () async {
           String content = await controller.getQuestionsFromPDF();
-          // print("PDF Content: $content");
-
           // ApiClient apiClient = ApiClient();
           // apiClient.extractQuestions(content).then((response) {
           //   if (response.statusCode == 200) {
@@ -354,11 +359,7 @@ class ManageQuestionsCreate extends StatelessWidget {
           for (var question in data['mcq'] as List) {
             controller.options = [];
             for (var option in question['options'] as List) {
-              print("Option: $option ${controller.options}");
               controller.addOption(option);
-              // controller.options.add(
-              //   Option(text: option, isCorrect: option == question['answer']),
-              // );
             }
             controller.questionController.text = question['text'];
             await showModalBottomSheet(
